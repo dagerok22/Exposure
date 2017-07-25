@@ -1,34 +1,25 @@
 package com.noveogroup.evgeny.awersomeproject;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 
-import clarifai2.api.ClarifaiBuilder;
-import clarifai2.api.ClarifaiClient;
-import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.dto.input.ClarifaiImage;
-import clarifai2.dto.input.ClarifaiInput;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 
 public class MainActivity extends AppCompatActivity {
-    List<ClarifaiOutput<Concept>> predictionResults;
     static final String TAG = "MainActivity";
+    List<ClarifaiOutput<Concept>> predictionResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 //        final ClarifaiClient client = new ClarifaiBuilder("f7bcefcc6cbf45219549bc97714c8604").buildSync();
 //
 //        client.getDefaultModels().generalModel() // You can also do Clarifai.getModelByID("id") to get custom models
@@ -58,10 +49,15 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("asd");
     }
 
-    public void onClick(View view) {
-        this.getFilesDir().toString();
-        TextView textView = (TextView) findViewById(R.id.text_view);
-        textView.setText(predictionResults.get(0).data().get(0).toString());
+    //    public void onClick(View view) {
+//        this.getFilesDir().toString();
+//        TextView textView = (TextView) findViewById(R.id.text_view);
+//        textView.setText(predictionResults.get(0).data().get(0).toString());
+//    }
+    @OnClick(R.id.on_screen3_button)
+    public void onScreen3() {
+        Intent intent = new Intent(MainActivity.this, screen3.class);
+        startActivity(intent);
     }
 
 
