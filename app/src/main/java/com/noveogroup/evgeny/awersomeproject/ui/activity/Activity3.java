@@ -12,15 +12,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.noveogroup.evgeny.awersomeproject.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,14 +64,11 @@ public class Activity3 extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                // Error occurred while creating the File
-
                 Log.d("SCREEN3", "File create err: ", ex);
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.noveogroup.evgeny.fileprovider",
+                Uri photoURI = FileProvider.getUriForFile(this, "com.noveogroup.evgeny.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
@@ -82,40 +79,39 @@ public class Activity3 extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            //File imgFile = new File(mCurrentPhotoPath);
             Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-
-            //Bitmap d = new BitmapDrawable(ctx.getResources() , w.photo.getAbsolutePath()).getBitmap();
-            int nh = (int) ( bitmap.getHeight() * (1024.0 / bitmap.getWidth()) );
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1024, nh, true);
-
-//            if (imgFile.exists()) {
-//                try {
-//                    Bitmap myBitmap = Glide.with(this).asBitmap().load(imgFile).into(340, 340).get();
-//                    imageView.setImageBitmap(myBitmap);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
+            int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap,1024, nh, true);
+            File f = new File(mCurrentPhotoPath);
+            FileOutputStream fOut = null;
+            try {
+                fOut = new FileOutputStream(f);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            scaled.compress(Bitmap.CompressFormat.JPEG, 20, fOut);
+            try {
+                fOut.flush();
+                fOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //Bitmap bitmap1 = BitmapFactory.decodeFile(mCurrentPhotoPath);
             imageView.setImageBitmap(scaled);
-//            Glide.with(this).load(imgFile)
-//                    .into(imageView);
+
             sendToCloud();
 
         }
     }
 
     void sendToCloud() {
-        AsyncTask<Void,Void, List<ClarifaiOutput<Concept>>> asyncTask = new AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>() {
+        AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>> asyncTask = new AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>() {
             @Override
             protected List<ClarifaiOutput<Concept>> doInBackground(Void... params) {
-                Log.d("asd","doInbackground");
+                Log.d("asd", "doInbackground");
                 final ClarifaiClient client = new ClarifaiBuilder("f7bcefcc6cbf45219549bc97714c8604").buildSync();
 
-               return client.getDefaultModels().generalModel() // You can also do Clarifai.getModelByID("id") to get custom models
+                return client.getDefaultModels().generalModel() // You can also do Clarifai.getModelByID("id") to get custom models
                         .predict()
                         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(new File(mCurrentPhotoPath))))
                         .executeSync()
@@ -125,7 +121,7 @@ public class Activity3 extends AppCompatActivity {
             @Override
             protected void onPostExecute(List<ClarifaiOutput<Concept>> clarifaiOutputs) {
                 predictionResults = clarifaiOutputs;
-                Log.d("asd","onPost");
+                Log.d("asd", "onPost");
             }
         };
         asyncTask.execute((Void[]) null);
