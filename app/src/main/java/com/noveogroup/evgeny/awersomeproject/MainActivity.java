@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 //    }
     @OnClick(R.id.on_screen3_button)
     public void onScreen3() {
-        Intent intent = new Intent(MainActivity.this, screen3.class);
+        Intent intent = new Intent(MainActivity.this, Activity3.class);
         startActivity(intent);
     }
 
