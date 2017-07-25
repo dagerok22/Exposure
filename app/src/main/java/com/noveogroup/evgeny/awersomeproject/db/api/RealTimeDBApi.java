@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
+import com.noveogroup.evgeny.awersomeproject.db.model.User;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 
 import java.util.ArrayList;
@@ -36,23 +37,21 @@ public class RealTimeDBApi {
         return new RealTimeDBApi();
     }
 
-    public List<Task> getAllTasks() {
+    public void getAllTasks(OnTestResultCallBack callback) {
+        final List<Task> tasksData = new ArrayList<>();
         tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                tasksDataset.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    tasksDataset.add(child.getValue(Task.class));
+                    tasksData.add(child.getValue(Task.class));
                 }
-                System.out.print("asd");
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                tasksDataset = null;
             }
         });
-        return tasksDataset;
+        callback.onDataReceived(tasksData);
     }
 
     public void writeTask(String name,
@@ -76,5 +75,42 @@ public class RealTimeDBApi {
 
         DatabaseReference newTaskRef = tasksRef.push();
         newTaskRef.setValue(newTask);
+    }
+
+    public void getAllUsers(OnUserResultCallBack callBack) {
+        final List<User> userData = new ArrayList<>();
+        tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    userData.add(child.getValue(User.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        callBack.onDataReceived(userData);
+    }
+
+    public void writeUser(String name,
+                          float rating,
+                          Date dateOfReg) {
+        User newUser = new User();
+        newUser.setName(name);
+        newUser.setRating(rating);
+        newUser.setDateOfRegistration(DateTransformerUtil.getDateAsString(dateOfReg));
+
+        DatabaseReference newTaskRef = tasksRef.push();
+        newTaskRef.setValue(newUser);
+    }
+
+    interface OnTestResultCallBack {
+        void onDataReceived(List<Task> data);
+    }
+
+    interface OnUserResultCallBack {
+        void onDataReceived(List<User> data);
     }
 }

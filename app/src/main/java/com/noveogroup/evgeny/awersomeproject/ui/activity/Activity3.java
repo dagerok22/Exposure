@@ -1,4 +1,4 @@
-package com.noveogroup.evgeny.awersomeproject;
+package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.noveogroup.evgeny.awersomeproject.R;
 
 import java.io.File;
 import java.io.IOException;
