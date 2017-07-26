@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Awersome Project</string>
     <string name="title_activity_task_list">TaskListActivity</string>
+    <string name="less_then_hour_task_age">less then an hour</string>
 </resources>
