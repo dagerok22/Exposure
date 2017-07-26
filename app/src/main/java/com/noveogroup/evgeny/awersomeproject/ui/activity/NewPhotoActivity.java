@@ -11,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
@@ -40,6 +42,8 @@ public class NewPhotoActivity extends AppCompatActivity {
     public ImageView imageView;
     @BindView(R.id.tag_recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.tag_progress_bar)
+    ProgressBar progressBar;
     boolean wasRequestSend;
     Bitmap scaled;
     List<ClarifaiOutput<Concept>> predictionResults;
@@ -81,6 +85,7 @@ public class NewPhotoActivity extends AppCompatActivity {
             protected void onPostExecute(List<ClarifaiOutput<Concept>> clarifaiOutputs) {
                 predictionResults = clarifaiOutputs;
                 recyclerViewSetup();
+                progressBar.setVisibility(View.GONE);
                 Log.d(TAG, "onPost");
             }
         };

@@ -16,6 +16,12 @@
             android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop" />
 
+        <ProgressBar
+            android:id="@+id/tag_progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tag_recycler_view"
             android:layout_width="match_parent"
