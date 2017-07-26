@@ -19,7 +19,6 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +36,7 @@ public class NewPhotoActivity extends AppCompatActivity {
 
     public static final String PHOTO_PATH = "photo_path";
     static final String TAG = "NewPhotoActivity";
+    public static final String WAS_REQUEST_SEND = "was_request_send";
 
     @BindView(R.id.photo_view)
     public ImageView imageView;
@@ -59,9 +59,20 @@ public class NewPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_photo);
         ButterKnife.bind(this);
+        if(savedInstanceState!=null){
+            wasRequestSend = savedInstanceState.getBoolean(WAS_REQUEST_SEND);
+        }
+        if (!wasRequestSend) {
+            progressBar.setVisibility(View.VISIBLE);
+            startAsyncTask();
+            wasRequestSend = true;
+        }
+    }
 
-        startAsyncTask();
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(WAS_REQUEST_SEND,wasRequestSend);
     }
 
     private void recyclerViewSetup() {
