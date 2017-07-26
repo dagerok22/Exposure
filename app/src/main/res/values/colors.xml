@@ -3,7 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="task_item_bottom_section_color">#eee</color>
-    <color name="task_item_tag_color">#333333</color>
+    <color name="task_list_background_color">#eee</color>
+    <color name="task_item_bottom_section_color">#fff</color>
+    <color name="task_item_title_color">#99ffffff</color>
+    <color name="task_item_tag_color">#111</color>
     <color name="task_item_author_color">#999999</color>
+    <color name="task_item_age_color">#999999</color>
 </resources>
