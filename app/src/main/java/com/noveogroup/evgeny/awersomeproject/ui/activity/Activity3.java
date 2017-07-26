@@ -36,11 +36,11 @@ public class Activity3 extends AppCompatActivity {
 
 
     static final int REQUEST_TAKE_PHOTO = 225;
-    static final String TAG = "MainActivity";
-    @BindView(R.id.imageView)
-    public ImageView imageView;
-    String mCurrentPhotoPath;
-    List<ClarifaiOutput<Concept>> predictionResults;
+
+//    @BindView(R.id.imageView)
+//    public ImageView imageView;
+    String currentPhotoPath;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,54 +79,11 @@ public class Activity3 extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            int nh = (int) (bitmap.getHeight() * (1024.0 / bitmap.getWidth()));
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap,1024, nh, true);
-            File f = new File(mCurrentPhotoPath);
-            FileOutputStream fOut = null;
-            try {
-                fOut = new FileOutputStream(f);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            scaled.compress(Bitmap.CompressFormat.JPEG, 20, fOut);
-            try {
-                fOut.flush();
-                fOut.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //Bitmap bitmap1 = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            imageView.setImageBitmap(scaled);
-
-            sendToCloud();
-
+            startActivity(NewPhotoActivity.newIntent(this, currentPhotoPath));
         }
     }
 
-    void sendToCloud() {
-        AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>> asyncTask = new AsyncTask<Void, Void, List<ClarifaiOutput<Concept>>>() {
-            @Override
-            protected List<ClarifaiOutput<Concept>> doInBackground(Void... params) {
-                Log.d("asd", "doInbackground");
-                final ClarifaiClient client = new ClarifaiBuilder("f7bcefcc6cbf45219549bc97714c8604").buildSync();
 
-                return client.getDefaultModels().generalModel() // You can also do Clarifai.getModelByID("id") to get custom models
-                        .predict()
-                        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(new File(mCurrentPhotoPath))))
-                        .executeSync()
-                        .get();
-            }
-
-            @Override
-            protected void onPostExecute(List<ClarifaiOutput<Concept>> clarifaiOutputs) {
-                predictionResults = clarifaiOutputs;
-                Log.d("asd", "onPost");
-            }
-        };
-        asyncTask.execute((Void[]) null);
-
-    }
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -138,9 +95,8 @@ public class Activity3 extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
+        currentPhotoPath = image.getAbsolutePath();
         return image;
     }
 }
