@@ -8,10 +8,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.noveogroup.evgeny.awersomeproject.R;
+import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +38,8 @@ public class NewPhotoActivity extends AppCompatActivity {
 
     @BindView(R.id.photo_view)
     public ImageView imageView;
+    @BindView(R.id.tag_recycler_view)
+    RecyclerView recyclerView;
     boolean wasRequestSend;
     Bitmap scaled;
     List<ClarifaiOutput<Concept>> predictionResults;
@@ -50,8 +55,15 @@ public class NewPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_photo);
         ButterKnife.bind(this);
+
         startAsyncTask();
 
+    }
+
+    private void recyclerViewSetup() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        TagListRecyclerViewAdapter adapter = new TagListRecyclerViewAdapter(predictionResults.get(0).data());
+        recyclerView.setAdapter(adapter);
     }
 
     void startAsyncTask() {
@@ -61,12 +73,14 @@ public class NewPhotoActivity extends AppCompatActivity {
                 String currentPhotoPath = getIntent().getStringExtra(PHOTO_PATH);
                 scaled = scalePhotoFile(currentPhotoPath);
                 imageView.post(() -> imageView.setImageBitmap(scaled));
-                return null; //getClarifaiOutputs(currentPhotoPath);
+                //return null;
+                return getClarifaiOutputs(currentPhotoPath);
             }
 
             @Override
             protected void onPostExecute(List<ClarifaiOutput<Concept>> clarifaiOutputs) {
                 predictionResults = clarifaiOutputs;
+                recyclerViewSetup();
                 Log.d(TAG, "onPost");
             }
         };
@@ -86,13 +100,10 @@ public class NewPhotoActivity extends AppCompatActivity {
         FileOutputStream fOut = null;
         try {
             fOut = new FileOutputStream(new File(currentPhotoPath));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        scaled.compress(Bitmap.CompressFormat.JPEG, 10, fOut);
-        try {
+            scaled.compress(Bitmap.CompressFormat.JPEG, 10, fOut);
             fOut.flush();
             fOut.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
