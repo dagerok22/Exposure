@@ -44,6 +44,7 @@ public class RealTimeDBApi {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     tasksData.add(child.getValue(Task.class));
+                    callback.onDataReceived(tasksData);
                 }
             }
 
@@ -51,7 +52,7 @@ public class RealTimeDBApi {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        callback.onDataReceived(tasksData);
+
     }
 
     public void writeTask(String name,
@@ -84,6 +85,7 @@ public class RealTimeDBApi {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     userData.add(child.getValue(User.class));
+                    callBack.onDataReceived(userData);
                 }
             }
 
@@ -91,7 +93,6 @@ public class RealTimeDBApi {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        callBack.onDataReceived(userData);
     }
 
     public void writeUser(String name,
@@ -106,11 +107,12 @@ public class RealTimeDBApi {
         newTaskRef.setValue(newUser);
     }
 
-    interface OnTestResultCallBack {
+
+    public interface OnTestResultCallBack {
         void onDataReceived(List<Task> data);
     }
 
-    interface OnUserResultCallBack {
+    public interface OnUserResultCallBack {
         void onDataReceived(List<User> data);
     }
 }
