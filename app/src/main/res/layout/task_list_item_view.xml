@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="@dimen/task_item_margin">
 
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -11,14 +11,13 @@
 
         <android.support.v7.widget.ContentFrameLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="@dimen/task_item_top_height">
 
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/task_item_drawable" />
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/title"
@@ -27,8 +26,8 @@
                 android:layout_gravity="bottom|start"
                 android:layout_marginBottom="@dimen/task_item_title_margin_bottom"
                 android:layout_marginStart="@dimen/task_item_title_margin_left"
-                android:textColor="#ffffff"
-                android:textSize="30sp" />
+                android:textColor="@color/task_item_title_color"
+                android:textSize="@dimen/task_item_title_size" />
         </android.support.v7.widget.ContentFrameLayout>
 
         <LinearLayout
@@ -37,7 +36,8 @@
             android:background="@color/task_item_bottom_section_color"
             android:minHeight="50dp"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="@dimen/task_item_bottom_padding"
+            android:translationZ="1dp">
 
             <TextView
                 android:id="@+id/tags"
@@ -50,8 +50,18 @@
                 android:id="@+id/author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:textColor="@color/task_item_author_color"
+                android:textSize="@dimen/task_item_author_size" />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textAlignment="textEnd"
-                android:textSize="15sp" />
+                android:textColor="@color/task_item_age_color"
+                android:textSize="@dimen/task_item_author_size" />
+
         </LinearLayout>
     </android.support.v7.widget.LinearLayoutCompat>
 

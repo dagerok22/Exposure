@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
+import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         TextView title;
         TextView tags;
         TextView author;
+        TextView age;
 
         ViewHolder(View v) {
             super(v);
@@ -30,6 +32,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             title = v.findViewById(R.id.title);
             tags = v.findViewById(R.id.tags);
             author = v.findViewById(R.id.author);
+            age = v.findViewById(R.id.age);
         }
     }
 
@@ -57,6 +60,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         holder.title.setText(task.getName());
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(stringBuilder.toString());
+        holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
         Glide.with(holder.title.getContext())
                 .load(task.getImageUrl())
                 .centerCrop()
