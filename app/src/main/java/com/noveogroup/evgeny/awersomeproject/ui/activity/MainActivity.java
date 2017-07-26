@@ -42,11 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button)
     public void onButtonClick(){
-        ProgressDialog progressDialog = getProgressDialog();
-        progressDialog.show();
-        RealTimeDBApi.getInstance().getAllTasks(data -> {
-            progressDialog.dismiss();
-        });
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
     }
 
 

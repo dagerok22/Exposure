@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="task_item_tag_size">20sp</dimen>
+    <dimen name="task_item_author_size">15sp</dimen>
+    <dimen name="task_item_title_size">30sp</dimen>
+    <dimen name="task_item_title_margin_left">8dp</dimen>
+    <dimen name="task_item_title_margin_bottom">8dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>
