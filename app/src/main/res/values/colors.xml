@@ -9,4 +9,5 @@
     <color name="task_item_tag_color">#111</color>
     <color name="task_item_author_color">#999999</color>
     <color name="task_item_age_color">#999999</color>
+    <color name="toolbar">#ffeb3b</color>
 </resources>

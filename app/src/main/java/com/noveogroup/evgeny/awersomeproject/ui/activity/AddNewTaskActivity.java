@@ -1,5 +1,6 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import java.util.Date;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Activity3 extends AppCompatActivity {
+public class AddNewTaskActivity extends AppCompatActivity {
 
 
     static final int REQUEST_TAKE_PHOTO = 225;
@@ -29,7 +30,7 @@ public class Activity3 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_screen3);
+        setContentView(R.layout.activity_add_new_task);
         ButterKnife.bind(this);
     }
 
@@ -71,6 +72,7 @@ public class Activity3 extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
+        @SuppressLint("SimpleDateFormat")
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = this.getFilesDir();

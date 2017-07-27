@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "117598585189-aq3p0vgd6fhsta0u7a294no4jmq7smcu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noveogroup.evgeny.awersomeproject",
+            "certificate_hash": "f7d6ec378df7593ae994d9aa6e4cae37daecbd7d"
+          }
+        },
+        {
           "client_id": "117598585189-k91bi1eh4o5b7l0ukonjq42vv2ve57nk.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117598585189-k91bi1eh4o5b7l0ukonjq42vv2ve57nk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
