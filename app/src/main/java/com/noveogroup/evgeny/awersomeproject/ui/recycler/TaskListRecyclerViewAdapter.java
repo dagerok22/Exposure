@@ -12,8 +12,11 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.noveogroup.evgeny.awersomeproject.R.id.tags;
 
 
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.ViewHolder> {
@@ -49,13 +52,14 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = dataSet.get(position);
+
+        List<String> tags = Arrays.asList(task.getTags().get(0).replaceAll("\\s+", "").split(","));
         StringBuilder stringBuilder = new StringBuilder();
-        Iterator<String> iterator = task.getTags().iterator();
-        while (iterator.hasNext()) {
-            stringBuilder.append(iterator.next());
-            if (iterator.hasNext()) {
-                stringBuilder.append(", ");
-            }
+        for (String tag :
+                tags) {
+            stringBuilder.append("#")
+                    .append(tag)
+                    .append(" ");
         }
         holder.title.setText(task.getName());
         holder.author.setText(task.getAuthorName());

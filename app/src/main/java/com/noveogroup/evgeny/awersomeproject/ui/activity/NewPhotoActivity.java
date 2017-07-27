@@ -67,18 +67,6 @@ public class NewPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_photo);
         ButterKnife.bind(this);
-        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
-        dbApi.writeImageAndGetUrl(new File(getIntent().getStringExtra(PHOTO_PATH)), new RealTimeDBApi.HandleImageFileCallback() {
-            @Override
-            public void onSuccess(Uri imageRef) {
-                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("1234567", "From onFailure");
-            }
-        });
         startAsyncTask();
     }
 
