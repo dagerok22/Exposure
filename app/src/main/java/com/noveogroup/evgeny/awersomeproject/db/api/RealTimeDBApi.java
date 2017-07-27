@@ -145,13 +145,13 @@ public class RealTimeDBApi {
         void onDataReceived(List<User> data);
     }
 
-    interface HandleImageUriCallback {
+    public interface HandleImageUriCallback {
         void onSuccess(Uri imageRef);
 
         void onFailure(Exception e);
     }
 
-    interface HandleImageFileCallback {
+    public interface HandleImageFileCallback {
         void onSuccess(Uri imageRef);
 
         void onFailure(Exception e);

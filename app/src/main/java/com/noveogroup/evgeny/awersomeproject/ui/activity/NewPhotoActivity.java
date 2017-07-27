@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,18 +15,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.noveogroup.evgeny.awersomeproject.R;
+import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.dto.input.ClarifaiImage;
@@ -59,9 +67,19 @@ public class NewPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_photo);
         ButterKnife.bind(this);
+        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
+        dbApi.writeImageAndGetUrl(new File(getIntent().getStringExtra(PHOTO_PATH)), new RealTimeDBApi.HandleImageFileCallback() {
+            @Override
+            public void onSuccess(Uri imageRef) {
+                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                Log.d("1234567", "From onFailure");
+            }
+        });
         startAsyncTask();
-
     }
 
     private void recyclerViewSetup() {
@@ -126,5 +144,28 @@ public class NewPhotoActivity extends AppCompatActivity {
                 .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(new File(currentPhotoPath))))
                 .executeSync()
                 .get();
+    }
+
+    @OnClick(R.id.upload)
+    void uploadTask(){
+        String name = "John";
+        List<String> tags = new ArrayList<>(Arrays.asList(new String[]{"cat, mammal, pet"}));
+        double lat = 0.5;
+        double lng = 0.6;
+        float rating = 5.6f;
+        String authorName = "Simon";
+        int authorId = 4;
+        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
+        dbApi.writeImageAndGetUrl(new File(getIntent().getStringExtra(PHOTO_PATH)), new RealTimeDBApi.HandleImageFileCallback() {
+            @Override
+            public void onSuccess(Uri imageRef) {
+                dbApi.writeTask("Name", tags, imageRef.toString(), new LatLng(0.5, 0.5), rating, authorId, authorName, new Date());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

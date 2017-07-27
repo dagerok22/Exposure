@@ -16,6 +16,12 @@
             android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop" />
 
+        <Button
+            android:id="@+id/upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="upload" />
+
         <ProgressBar
             android:id="@+id/tag_progress_bar"
             style="?android:attr/progressBarStyle"
@@ -25,7 +31,6 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tag_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
