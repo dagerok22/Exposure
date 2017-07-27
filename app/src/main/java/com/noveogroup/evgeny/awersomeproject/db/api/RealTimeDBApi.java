@@ -1,16 +1,25 @@
 package com.noveogroup.evgeny.awersomeproject.db.api;
 
 
+import android.net.Uri;
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.db.model.User;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,15 +28,18 @@ public class RealTimeDBApi {
 
     private static final String USERS_NODE = "users";
     private static final String TASKS_NODE = "tasks";
+    private static final String IMAGES_NODE = "images";
 
     private static final String REAL_TIME_DB_LOG_TAG = "realtimeDB";
 
     private static FirebaseDatabase database;
+    private static FirebaseStorage storage;
     private static DatabaseReference usersRef;
     private static DatabaseReference tasksRef;
     private static List<Task> tasksDataset;
 
     public static RealTimeDBApi getInstance() {
+        storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance();
         if (tasksDataset == null) {
             tasksDataset = new ArrayList<>();
@@ -107,12 +119,41 @@ public class RealTimeDBApi {
         newTaskRef.setValue(newUser);
     }
 
+    public void writeImageAndGetUrl(File image, HandleImageFileCallback handleUri) {
+        StorageReference storageRef = storage.getReference(IMAGES_NODE);
+        StorageReference imagesRef = storageRef.child(image.getName());
+
+        Uri file = Uri.fromFile(image);
+        UploadTask uploadTask = imagesRef.putFile(file);
+        uploadTask.addOnFailureListener(handleUri::onFailure)
+                .addOnSuccessListener(taskSnapshot -> handleUri.onSuccess(taskSnapshot.getDownloadUrl()));
+    }
+    public void writeImageAndGetUrl(Uri image, HandleImageUriCallback handleUri) {
+        StorageReference storageRef = storage.getReference(IMAGES_NODE);
+        StorageReference imagesRef = storageRef.child(image.getLastPathSegment());
+
+        UploadTask uploadTask = imagesRef.putFile(image);
+        uploadTask.addOnFailureListener(handleUri::onFailure)
+                .addOnSuccessListener(taskSnapshot -> handleUri.onSuccess(taskSnapshot.getDownloadUrl()));
+    }
 
     public interface OnTestResultCallBack {
         void onDataReceived(List<Task> data);
     }
 
-    public interface OnUserResultCallBack {
+    interface OnUserResultCallBack {
         void onDataReceived(List<User> data);
+    }
+
+    interface HandleImageUriCallback {
+        void onSuccess(Uri imageRef);
+
+        void onFailure(Exception e);
+    }
+
+    interface HandleImageFileCallback {
+        void onSuccess(Uri imageRef);
+
+        void onFailure(Exception e);
     }
 }
