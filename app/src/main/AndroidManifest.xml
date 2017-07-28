@@ -15,14 +15,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".ui.activity.MainActivity">
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.AddNewTaskActivity" />
+        <activity
+            android:name=".ui.activity.AddNewTaskActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.TaskListActivity"
+            android:label="@string/title_activity_task_list"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.NewPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.TaskDetailsActivity"
+            android:label="@string/title_activity_task_details"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -34,15 +50,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity
-            android:name=".ui.activity.TaskListActivity"
-            android:label="@string/title_activity_task_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.activity.NewPhotoActivity" />
-        <activity
-            android:name=".ui.activity.TaskDetailsActivity"
-            android:label="@string/title_activity_task_details"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
