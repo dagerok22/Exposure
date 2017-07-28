@@ -9,10 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdap
 import com.noveogroup.evgeny.awersomeproject.util.PhotoHelper;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -34,11 +37,13 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 
-public class NewPhotoActivity extends AppCompatActivity {
+public class NewPhotoActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.TagChooseListener {
 
     public static final String PHOTO_PATH = "photo_path";
     static final String TAG = "NewPhotoActivity";
 
+    @BindView(R.id.task_name)
+    public EditText taskNameEditText;
     @BindView(R.id.photo_view)
     public ImageView imageView;
     @BindView(R.id.tag_recycler_view)
@@ -47,6 +52,7 @@ public class NewPhotoActivity extends AppCompatActivity {
     ProgressBar progressBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    ArrayList<String> chosenTags;
     boolean wasRequestSend;
     List<ClarifaiOutput<Concept>> predictionResults;
 
@@ -66,7 +72,7 @@ public class NewPhotoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_done:
-                sendTaskToStorage();
+                returnTags();
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
@@ -75,27 +81,22 @@ public class NewPhotoActivity extends AppCompatActivity {
         }
     }
 
-    private void sendTaskToStorage() {
-        Toast.makeText(this,"galka",Toast.LENGTH_SHORT).show();
-//        String name = "FirstTask";
-//        List<String> tags =predictionResults.get(0).data();
-//        double lat = 0.5;
-//        double lng = 0.6;
-//        float rating = 5.6f;
-//        String authorName = "Simon";
-//        int authorId = 4;
-//        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
-//        dbApi.writeImageAndGetUrl(new File(getIntent().getStringExtra(PHOTO_PATH)), new RealTimeDBApi.HandleImageFileCallback() {
-//            @Override
-//            public void onSuccess(Uri imageRef) {
-//                dbApi.writeTask("Name", tags, imageRef.toString(), new LatLng(0.5, 0.5), rating, authorId, authorName, new Date());
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
+    private void returnTags() {
+        //Toast.makeText(this, "galka", Toast.LENGTH_SHORT).show();
+        if (!chosenTags.isEmpty()) {
+            if (!TextUtils.isEmpty(taskNameEditText.getText())) {
+                Intent answerIntent = new Intent();
+                answerIntent.putStringArrayListExtra(AddNewTaskActivity.TAGS_ARRAY, chosenTags);
+                answerIntent.putExtra(AddNewTaskActivity.NEW_TASK_NAME, taskNameEditText.getText().toString());
+                setResult(RESULT_OK, answerIntent);
+                finish();
+            }
+            else {
+                Toast.makeText(this, "Enter task name", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Chose from one to three tags first", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -105,12 +106,13 @@ public class NewPhotoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         startAsyncTask();
+        chosenTags = new ArrayList<>();
         Glide.with(this).load(new File(getIntent().getStringExtra(PHOTO_PATH))).into(imageView);
     }
 
     private void recyclerViewSetup() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        TagListRecyclerViewAdapter adapter = new TagListRecyclerViewAdapter(predictionResults.get(0).data());
+        TagListRecyclerViewAdapter adapter = new TagListRecyclerViewAdapter(predictionResults.get(0).data(), this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -144,5 +146,19 @@ public class NewPhotoActivity extends AppCompatActivity {
                 .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(new File(currentPhotoPath))))
                 .executeSync()
                 .get();
+    }
+
+    @Override
+    public boolean tagChosen(String tag, boolean checked) {
+
+        if (!checked) {
+            chosenTags.remove(tag);
+            return true;
+        }
+        if (chosenTags.size() < 3) {
+            chosenTags.add(tag);
+            return true;
+        }
+        return false;
     }
 }

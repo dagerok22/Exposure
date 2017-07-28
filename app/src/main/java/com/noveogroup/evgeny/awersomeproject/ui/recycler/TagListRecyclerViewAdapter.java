@@ -20,8 +20,10 @@ import clarifai2.dto.prediction.Concept;
 
 public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecyclerViewAdapter.ViewHolder> {
     private List<Concept> data;
+    private TagChooseListener tagChooseListener;
 
-    public TagListRecyclerViewAdapter(List<Concept> data) {
+    public TagListRecyclerViewAdapter(List<Concept> data, TagChooseListener tagChooseListener) {
+        this.tagChooseListener = tagChooseListener;
         this.data = data;
     }
 
@@ -41,6 +43,11 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
         return data.size();
     }
 
+    public interface TagChooseListener {
+        //result boolean shows was tag accepted
+        boolean tagChosen(String tag, boolean checked);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tag_text)
         TextView tag;
@@ -57,12 +64,15 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
 
         @OnClick(R.id.tag_card)
         void onCardClick() {
-            if (checked) {
-                cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.cardview_light_background));
-            } else {
-                cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.toolbar));
+
+            if (tagChooseListener.tagChosen(tag.getText().toString(), !checked)) {
+                if (checked) {
+                    cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.cardview_light_background));
+                } else {
+                    cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.toolbar));
+                }
+                checked = !checked;
             }
-            checked = !checked;
         }
 
         public void setPosition(int position) {
