@@ -3,4 +3,9 @@
     <string name="title_activity_task_list">TaskListActivity</string>
     <string name="less_then_hour_task_age">less then an hour</string>
     <string name="action_favorite">done</string>
+    <string name="title_activity_task_details">TaskDetailsActivity</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="settings_file">sp_settings_file</string>
+    <string name="task_detail_transition_animation">is_task_detail_transition_animation_enabled</string>
 </resources>

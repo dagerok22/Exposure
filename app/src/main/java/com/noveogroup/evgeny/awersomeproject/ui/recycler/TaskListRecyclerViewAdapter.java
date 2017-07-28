@@ -11,11 +11,13 @@ import com.bumptech.glide.Glide;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
+import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.noveogroup.evgeny.awersomeproject.R.id.rating;
 import static com.noveogroup.evgeny.awersomeproject.R.id.tags;
 
 
@@ -26,6 +28,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         ImageView imageView;
         TextView title;
         TextView tags;
+        TextView rating;
         TextView author;
         TextView age;
 
@@ -36,6 +39,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             tags = v.findViewById(R.id.tags);
             author = v.findViewById(R.id.author);
             age = v.findViewById(R.id.age);
+            rating = v.findViewById(R.id.rating);
         }
     }
 
@@ -53,18 +57,11 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = dataSet.get(position);
 
-        List<String> tags = Arrays.asList(task.getTags().get(0).replaceAll("\\s+", "").split(","));
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String tag :
-                tags) {
-            stringBuilder.append("#")
-                    .append(tag)
-                    .append(" ");
-        }
         holder.title.setText(task.getName());
         holder.author.setText(task.getAuthorName());
-        holder.tags.setText(stringBuilder.toString());
+        holder.tags.setText(StringUtil.getTagsString(task.getTags()));
         holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
+        holder.rating.setText(Float.toString(task.getRating()));
         Glide.with(holder.title.getContext())
                 .load(task.getImageUrl())
                 .centerCrop()
