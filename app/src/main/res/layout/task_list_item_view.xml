@@ -42,7 +42,7 @@
 
             <TextView
                 android:id="@+id/tags"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/task_item_tag_color"
                 android:textSize="@dimen/task_item_tag_size"
@@ -50,7 +50,7 @@
 
             <TextView
                 android:id="@+id/author"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="textStart"
                 android:textColor="@color/task_item_author_color"
@@ -59,7 +59,7 @@
 
             <TextView
                 android:id="@+id/rating"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="textStart"
                 android:textColor="@color/task_item_author_color"
@@ -68,7 +68,7 @@
 
             <TextView
                 android:id="@+id/age"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="textEnd"
                 android:textColor="@color/task_item_age_color"

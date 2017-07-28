@@ -2,36 +2,24 @@ package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.Button;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
@@ -40,7 +28,6 @@ import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class TaskDetailsActivity extends AppCompatActivity {
 
@@ -58,10 +45,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
     TextView rating;
     @BindView(R.id.age)
     TextView age;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     Task currentTask;
-
-    boolean isMapExpanded = false;
 
     private GoogleMap map;
 
@@ -73,7 +60,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
 
-
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
         title.setText(currentTask.getName());
         tags.setText(StringUtil.getTagsString(currentTask.getTags()));
@@ -82,7 +68,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
         age.setText(DateTransformerUtil.getAgeOfTask(currentTask.getDate(), getApplicationContext()));
 
         initializeMap();
-
     }
 
     public static Intent getIntent(Context context, Task task) {
@@ -92,6 +77,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         intent.putExtras(bundle);
         return intent;
     }
+
 
     private void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -118,25 +104,14 @@ public class TaskDetailsActivity extends AppCompatActivity {
         });
     }
 
-//    @OnClick(R.id.fab)
-//    void onMapClicked(){
-//        Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
-//        toggle();
-//    }
-//
-//    public void toggle() {
-//        ValueAnimator animation;
-//        if (isMapExpanded) {
-//            animation = ValueAnimator.ofFloat(0f, 1f);
-//        }else {
-//            animation = ValueAnimator.ofFloat(1.5f, 1f);
-//        }
-//        animation.setDuration(400);
-//        animation.start();
-//
-//        ObjectAnimator anim = ObjectAnimator.ofFloat(mapContainer, "layoutWeight",300);
-//        anim.start();
-//    }
+    void playMapAnimation() {
 
-
+        mapContainer.setTranslationY(mapContainer.getTranslationY() - 1000);
+        ObjectAnimator animMap = ObjectAnimator.ofFloat(mapContainer,
+                "translationY",
+                mapContainer.getTranslationY() + 1000);
+        animMap.setInterpolator(new DecelerateInterpolator());
+        animMap.setDuration(500);
+        animMap.start();
+    }
 }

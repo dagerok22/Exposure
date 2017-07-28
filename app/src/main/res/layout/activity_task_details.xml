@@ -27,10 +27,11 @@
         tools:showIn="@layout/activity_task_details">
 
         <FrameLayout
-            android:layout_width="match_parent"
             android:id="@+id/map_container"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5">
+
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/map"
                 class="com.google.android.gms.maps.SupportMapFragment"
@@ -47,14 +48,14 @@
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:transitionName="title" />
 
             <TextView
                 android:id="@+id/tags"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:transitionName="tags" />
@@ -62,7 +63,7 @@
 
             <TextView
                 android:id="@+id/author"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:transitionName="author" />
