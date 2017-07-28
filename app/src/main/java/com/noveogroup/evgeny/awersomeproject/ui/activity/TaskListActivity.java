@@ -26,6 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TaskListActivity extends AppCompatActivity {
 
@@ -45,17 +46,12 @@ public class TaskListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         if (savedInstanceState != null) {
             dataSet = (List<Task>) savedInstanceState.getSerializable(DATASET_KEY);
         } else {
             dataSet = new ArrayList<>();
         }
-
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
 
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
         initializeRecyclerView();
@@ -116,6 +112,12 @@ public class TaskListActivity extends AppCompatActivity {
     private void initializeAndSetUpAdapter() {
         adapter = new TaskListRecyclerViewAdapter(dataSet);
         recyclerView.setAdapter(adapter);
+    }
+
+    @OnClick(R.id.fab)
+    void onAddTaskFabClicked() {
+        Intent intent = new Intent(this, AddNewTaskActivity.class);
+        startActivity(intent);
     }
 
 }
