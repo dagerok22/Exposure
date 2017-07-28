@@ -1,42 +1,37 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,8 +39,8 @@ import butterknife.OnClick;
 
 public class TaskDetailsActivity extends AppCompatActivity {
 
+    static final int REQUEST_TAKE_PHOTO = 3;
     private static final String KEY_TASK_ITEM = "TASK_ITEM";
-
     @BindView(R.id.map_container)
     FrameLayout mapContainer;
     @BindView(R.id.title)
@@ -58,12 +53,19 @@ public class TaskDetailsActivity extends AppCompatActivity {
     TextView rating;
     @BindView(R.id.age)
     TextView age;
-
     Task currentTask;
-
     boolean isMapExpanded = false;
+    String currentPhotoPath;
 
     private GoogleMap map;
+
+    public static Intent getIntent(Context context, Task task) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_TASK_ITEM, task);
+        Intent intent = new Intent(context, TaskDetailsActivity.class);
+        intent.putExtras(bundle);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,14 +85,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
         initializeMap();
 
-    }
-
-    public static Intent getIntent(Context context, Task task) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_TASK_ITEM, task);
-        Intent intent = new Intent(context, TaskDetailsActivity.class);
-        intent.putExtras(bundle);
-        return intent;
     }
 
     private void initializeMap() {
@@ -118,7 +112,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         });
     }
 
-//    @OnClick(R.id.fab)
+    //    @OnClick(R.id.fab)
 //    void onMapClicked(){
 //        Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
 //        toggle();
@@ -137,6 +131,52 @@ public class TaskDetailsActivity extends AppCompatActivity {
 //        ObjectAnimator anim = ObjectAnimator.ofFloat(mapContainer, "layoutWeight",300);
 //        anim.start();
 //    }
+    @OnClick(R.id.TMP_BTN)
+    void onTMPClick() {
+        dispatchTakePictureIntent();
+    }
 
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.d("SCREEN3", "File create err: ", ex);
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "com.noveogroup.evgeny.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            //TODO переделай тэги
+            startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath,currentTask.getName(),new ArrayList<String>(currentTask.getTags())));
+        }
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        @SuppressLint("SimpleDateFormat")
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = this.getFilesDir();
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
 
 }
