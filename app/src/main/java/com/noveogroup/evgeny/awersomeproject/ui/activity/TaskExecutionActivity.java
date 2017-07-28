@@ -8,14 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,13 +31,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import clarifai2.dto.prediction.Concept;
 
-public class NewPhotoActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.TagChooseListener {
+public class TaskExecutionActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.TagChooseListener{
 
     public static final String PHOTO_PATH = "photo_path";
-    static final String TAG = "NewPhotoActivity";
-
+    public static final String TASK_NAME = "task_name";
+    public static final String TAGS = "tags";
+    static final String TAG = "TaskExecutionActivity";
     @BindView(R.id.task_name)
-    public EditText taskNameEditText;
+    TextView taskNameView;
     @BindView(R.id.photo_view)
     public ImageView imageView;
     @BindView(R.id.tag_recycler_view)
@@ -47,13 +47,25 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
     ProgressBar progressBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    ArrayList<String> chosenTags;
     List<Concept> predictionResults;
 
-    public static Intent newIntent(Context context, String photoPath) {
-        Intent intent = new Intent(context, NewPhotoActivity.class);
+    public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
+        Intent intent = new Intent(context, TaskExecutionActivity.class);
         intent.putExtra(PHOTO_PATH, photoPath);
+        intent.putExtra(TASK_NAME, taskName);
+        intent.putStringArrayListExtra(TAGS, tags);
         return intent;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_task_execution);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        taskNameView.setText(getIntent().getStringExtra(TASK_NAME));
+        startAsyncTask();
+        Glide.with(this).load(new File(getIntent().getStringExtra(PHOTO_PATH))).into(imageView);
     }
 
     @Override
@@ -66,38 +78,11 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_done:
-                returnTags();
+                Toast.makeText(this, "galka", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void returnTags() {
-        if (!chosenTags.isEmpty()) {
-            if (!TextUtils.isEmpty(taskNameEditText.getText())) {
-                Intent answerIntent = new Intent();
-                answerIntent.putStringArrayListExtra(AddNewTaskActivity.TAGS_ARRAY, chosenTags);
-                answerIntent.putExtra(AddNewTaskActivity.NEW_TASK_NAME, taskNameEditText.getText().toString());
-                setResult(RESULT_OK, answerIntent);
-                finish();
-            } else {
-                Toast.makeText(this, "Enter task name", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "Chose from one to three tags first", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_photo);
-        ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        startAsyncTask();
-        chosenTags = new ArrayList<>();
-        Glide.with(this).load(new File(getIntent().getStringExtra(PHOTO_PATH))).into(imageView);
     }
 
     private void recyclerViewSetup() {
@@ -128,15 +113,6 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
 
     @Override
     public boolean tagChosen(String tag, boolean checked) {
-
-        if (!checked) {
-            chosenTags.remove(tag);
-            return true;
-        }
-        if (chosenTags.size() < 3) {
-            chosenTags.add(tag);
-            return true;
-        }
         return false;
     }
 }
