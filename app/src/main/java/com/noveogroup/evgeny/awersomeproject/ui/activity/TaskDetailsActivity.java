@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -57,15 +58,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
     Task currentTask;
 
-    private GoogleMap map;
+    String currentPhotoPath;
 
-    public static Intent getIntent(Context context, Task task) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_TASK_ITEM, task);
-        Intent intent = new Intent(context, TaskDetailsActivity.class);
-        intent.putExtras(bundle);
-        return intent;
-    }
+    private GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
