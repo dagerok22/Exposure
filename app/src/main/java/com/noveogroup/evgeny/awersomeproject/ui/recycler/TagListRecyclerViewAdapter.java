@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.noveogroup.evgeny.awersomeproject.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,12 +20,16 @@ import clarifai2.dto.prediction.Concept;
 
 
 public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecyclerViewAdapter.ViewHolder> {
-    private List<Concept> data;
-    private TagChooseListener tagChooseListener;
+    private List<ChosenTag> chosenTags;
+    private ItemTapListener itemTapListener;
 
-    public TagListRecyclerViewAdapter(List<Concept> data, TagChooseListener tagChooseListener) {
-        this.tagChooseListener = tagChooseListener;
-        this.data = data;
+    public TagListRecyclerViewAdapter(List<Concept> data, ItemTapListener itemTapListener) {
+
+        this.itemTapListener = itemTapListener;
+        this.chosenTags = new ArrayList<>();
+        for (Concept concept : data) {
+            chosenTags.add(new ChosenTag(concept.name()));
+        }
     }
 
     @Override
@@ -40,12 +45,56 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return chosenTags.size();
     }
 
-    public interface TagChooseListener {
-        //result boolean shows was tag accepted
-        boolean tagChosen(String tag, boolean checked);
+    public void setTagChosenState(String tag, boolean state) {
+        int position = chosenTags.indexOf(new ChosenTag(tag));
+        if (position != -1) {
+            chosenTags.get(position).setChosen(state);
+            this.notifyItemChanged(position);
+        }
+    }
+
+    public interface ItemTapListener {
+        void tagChosen(String tag, boolean checked);
+    }
+
+    private class ChosenTag {
+        private String tag;
+        private boolean chosen;
+
+        ChosenTag(String tag) {
+            this.tag = tag;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ChosenTag chosenTag = (ChosenTag) o;
+
+            return tag != null ? tag.equals(chosenTag.tag) : chosenTag.tag == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return tag != null ? tag.hashCode() : 0;
+        }
+
+        String getTag() {
+            return tag;
+        }
+
+        boolean isChosen() {
+            return chosen;
+        }
+
+        void setChosen(boolean chosen) {
+            this.chosen = chosen;
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -54,8 +103,6 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
         @BindView(R.id.tag_card)
         CardView cardView;
         int currentPosition;
-        boolean checked;
-
 
         ViewHolder(View v) {
             super(v);
@@ -63,21 +110,20 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
         }
 
         @OnClick(R.id.tag_card)
-        void onCardClick() {
-
-            if (tagChooseListener.tagChosen(tag.getText().toString(), !checked)) {
-                if (checked) {
-                    cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.cardview_light_background));
-                } else {
-                    cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.toolbar));
-                }
-                checked = !checked;
+        void onItemTap() {
+            if (itemTapListener != null) {
+                itemTapListener.tagChosen(tag.getText().toString(), chosenTags.get(currentPosition).isChosen());
             }
         }
 
-        public void setPosition(int position) {
-            tag.setText(data.get(position).name());
+        void setPosition(int position) {
+            tag.setText(chosenTags.get(position).getTag());
             currentPosition = position;
+            if (chosenTags.get(position).isChosen()) {
+                cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.toolbar));
+            } else {
+                cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.cardview_light_background));
+            }
         }
     }
 }

@@ -82,12 +82,13 @@ public class AddNewTaskActivity extends AppCompatActivity {
             dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
                 @Override
                 public void onSuccess(Uri imageRef) {
-                    dbApi.writeTask("Name", tags, imageRef.toString(), new LatLng(0.65, 0.5), rating, authorId, authorName, new Date());
-                    Toast.makeText(getApplicationContext(),"Sucsess",Toast.LENGTH_SHORT).show();
+                    dbApi.writeTask(name, tags, imageRef.toString(), new LatLng(0.65, 0.5), rating, authorId, authorName, new Date());
+                    Toast.makeText(getApplicationContext(),"Success send",Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFailure(Exception e) {
+                    Toast.makeText(getApplicationContext(),"Failure send",Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             });

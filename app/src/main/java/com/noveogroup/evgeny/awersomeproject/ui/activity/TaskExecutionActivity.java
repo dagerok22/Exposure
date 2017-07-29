@@ -31,16 +31,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import clarifai2.dto.prediction.Concept;
 
-public class TaskExecutionActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.TagChooseListener{
+public class TaskExecutionActivity extends AppCompatActivity {
 
     public static final String PHOTO_PATH = "photo_path";
     public static final String TASK_NAME = "task_name";
     public static final String TAGS = "tags";
-    static final String TAG = "TaskExecutionActivity";
-    @BindView(R.id.task_name)
-    TextView taskNameView;
+    static final String LOG_TAG = "TaskExecutionActivity";
     @BindView(R.id.photo_view)
     public ImageView imageView;
+    @BindView(R.id.task_name)
+    TextView taskNameView;
     @BindView(R.id.tag_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.tag_progress_bar)
@@ -48,6 +48,8 @@ public class TaskExecutionActivity extends AppCompatActivity implements TagListR
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     List<Concept> predictionResults;
+    ArrayList<String> taskTags;
+    TagListRecyclerViewAdapter adapter;
 
     public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
         Intent intent = new Intent(context, TaskExecutionActivity.class);
@@ -64,6 +66,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements TagListR
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         taskNameView.setText(getIntent().getStringExtra(TASK_NAME));
+        taskTags = getIntent().getStringArrayListExtra(TAGS);
         startAsyncTask();
         Glide.with(this).load(new File(getIntent().getStringExtra(PHOTO_PATH))).into(imageView);
     }
@@ -87,7 +90,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements TagListR
 
     private void recyclerViewSetup() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        TagListRecyclerViewAdapter adapter = new TagListRecyclerViewAdapter(predictionResults, this);
+        adapter = new TagListRecyclerViewAdapter(predictionResults, null);
         recyclerView.setAdapter(adapter);
     }
 
@@ -104,15 +107,20 @@ public class TaskExecutionActivity extends AppCompatActivity implements TagListR
             protected void onPostExecute(List<Concept> clarifaiOutputs) {
                 predictionResults = clarifaiOutputs;
                 recyclerViewSetup();
+                chooseTaskTags();
                 progressBar.setVisibility(View.GONE);
-                Log.d(TAG, "onPost");
+                Log.d(LOG_TAG, "onPost");
             }
         };
         asyncTask.execute((Void[]) null);
     }
 
-    @Override
-    public boolean tagChosen(String tag, boolean checked) {
-        return false;
+    private void chooseTaskTags() {
+
+        for (Concept concept : predictionResults) {
+            if (taskTags.contains(concept.name())) {
+                adapter.setTagChosenState(concept.name(), true);
+            }
+        }
     }
 }

@@ -32,10 +32,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import clarifai2.dto.prediction.Concept;
 
-public class NewPhotoActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.TagChooseListener {
+public class NewPhotoActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.ItemTapListener {
 
     public static final String PHOTO_PATH = "photo_path";
     static final String TAG = "NewPhotoActivity";
+    static final int MAX_CHOSEN_TAGS = 7;
 
     @BindView(R.id.task_name)
     public EditText taskNameEditText;
@@ -49,6 +50,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
     Toolbar toolbar;
     ArrayList<String> chosenTags;
     List<Concept> predictionResults;
+    TagListRecyclerViewAdapter adapter;
 
     public static Intent newIntent(Context context, String photoPath) {
         Intent intent = new Intent(context, NewPhotoActivity.class);
@@ -102,7 +104,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
 
     private void recyclerViewSetup() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        TagListRecyclerViewAdapter adapter = new TagListRecyclerViewAdapter(predictionResults, this);
+        adapter = new TagListRecyclerViewAdapter(predictionResults, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -127,16 +129,15 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
     }
 
     @Override
-    public boolean tagChosen(String tag, boolean checked) {
-
-        if (!checked) {
+    public void tagChosen(String tag, boolean checked) {
+        if (checked) {
             chosenTags.remove(tag);
-            return true;
+            adapter.setTagChosenState(tag, false);
+        } else {
+            if (chosenTags.size() < MAX_CHOSEN_TAGS) {
+                chosenTags.add(tag);
+                adapter.setTagChosenState(tag, true);
+            }
         }
-        if (chosenTags.size() < 3) {
-            chosenTags.add(tag);
-            return true;
-        }
-        return false;
     }
 }

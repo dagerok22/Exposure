@@ -36,6 +36,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TaskDetailsActivity extends AppCompatActivity {
 
@@ -102,6 +103,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     .fillColor(ContextCompat.getColor(getApplicationContext(), R.color.marker_circle_color))
                     .radius(getResources().getInteger(R.integer.marker_circle_radius))
                     .strokeWidth(getResources().getInteger(R.integer.marker_circle_stroke_width));
+            //FIXME мне кажется маркер не нужен тут, как бы если есть круг, зачем помечать его центр?
             map.addMarker(new MarkerOptions().position(taskPos).title(getString(R.string.task_marker_sub)));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(taskPos, 16.0f));
             map.addCircle(circleOptions);
@@ -133,6 +135,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
 //        ObjectAnimator anim = ObjectAnimator.ofFloat(mapContainer, "layoutWeight",300);
 //        anim.start();
 //    }
+@OnClick(R.id.TMP_BTN)
+void onTMPClick(){
+    dispatchTakePictureIntent();
+}
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -141,7 +147,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Log.d("SCREEN3", "File create err: ", ex);
+                Log.d("TaskDetailsActivity", "File create err: ", ex);
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this, "com.noveogroup.evgeny.fileprovider",
