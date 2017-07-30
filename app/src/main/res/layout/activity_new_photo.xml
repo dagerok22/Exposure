@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/tag_recycler_view"
+                android:id="@+id/photo_tag_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

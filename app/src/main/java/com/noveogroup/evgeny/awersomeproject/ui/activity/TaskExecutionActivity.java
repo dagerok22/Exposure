@@ -41,15 +41,20 @@ public class TaskExecutionActivity extends AppCompatActivity {
     public ImageView imageView;
     @BindView(R.id.task_name)
     TextView taskNameView;
-    @BindView(R.id.tag_recycler_view)
-    RecyclerView recyclerView;
+    @BindView(R.id.photo_tag_recycler_view)
+    RecyclerView photoRecyclerView;
+    @BindView(R.id.task_tag_recycler_view)
+    RecyclerView taskRecyclerView;
     @BindView(R.id.tag_progress_bar)
-    ProgressBar progressBar;
+    ProgressBar progressBar1;
+    @BindView(R.id.miss_tag_progress_bar)
+    ProgressBar progressBar2;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    List<Concept> predictionResults;
+    List<String> predictionResults;
     ArrayList<String> taskTags;
-    TagListRecyclerViewAdapter adapter;
+    TagListRecyclerViewAdapter photoTagsAdapter;
+    TagListRecyclerViewAdapter taskTagsAdapter;
 
     public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
         Intent intent = new Intent(context, TaskExecutionActivity.class);
@@ -89,9 +94,12 @@ public class TaskExecutionActivity extends AppCompatActivity {
     }
 
     private void recyclerViewSetup() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TagListRecyclerViewAdapter(predictionResults, null);
-        recyclerView.setAdapter(adapter);
+        photoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        photoTagsAdapter = new TagListRecyclerViewAdapter(predictionResults, null);
+        taskTagsAdapter =  new TagListRecyclerViewAdapter(taskTags, null);
+        photoRecyclerView.setAdapter(photoTagsAdapter);
+        taskRecyclerView.setAdapter(taskTagsAdapter);
     }
 
     void startAsyncTask() {
@@ -105,21 +113,26 @@ public class TaskExecutionActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(List<Concept> clarifaiOutputs) {
-                predictionResults = clarifaiOutputs;
+                predictionResults = new ArrayList<>();
+                for (Concept concept : clarifaiOutputs){
+                    predictionResults.add(concept.name());
+                }
                 recyclerViewSetup();
-                chooseTaskTags();
-                progressBar.setVisibility(View.GONE);
+                sortTags();
+                progressBar1.setVisibility(View.GONE);
+                progressBar2.setVisibility(View.GONE);
                 Log.d(LOG_TAG, "onPost");
             }
         };
         asyncTask.execute((Void[]) null);
     }
 
-    private void chooseTaskTags() {
-
-        for (Concept concept : predictionResults) {
-            if (taskTags.contains(concept.name())) {
-                adapter.setTagChosenState(concept.name(), true);
+    private void sortTags() {
+        for (String tag : taskTags) {
+            if (predictionResults.contains(tag)) {
+                photoTagsAdapter.setTagChosenState(tag, true);
+            } else {
+                taskTagsAdapter.setTagChosenState(tag, true);
             }
         }
     }

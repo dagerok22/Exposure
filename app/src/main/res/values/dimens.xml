@@ -10,4 +10,5 @@
     <dimen name="task_item_bottom_padding">8dp</dimen>
     <dimen name="task_item_margin">8dp</dimen>
     <dimen name="tag_text_size">32sp</dimen>
+    <dimen name="tags_cards_tite_text_size">36sp</dimen>
 </resources>

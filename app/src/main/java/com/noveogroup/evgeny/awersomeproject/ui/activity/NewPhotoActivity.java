@@ -42,14 +42,14 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
     public EditText taskNameEditText;
     @BindView(R.id.photo_view)
     public ImageView imageView;
-    @BindView(R.id.tag_recycler_view)
+    @BindView(R.id.photo_tag_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.tag_progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     ArrayList<String> chosenTags;
-    List<Concept> predictionResults;
+    List<String> predictionResults;
     TagListRecyclerViewAdapter adapter;
 
     public static Intent newIntent(Context context, String photoPath) {
@@ -119,7 +119,10 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
 
             @Override
             protected void onPostExecute(List<Concept> clarifaiOutputs) {
-                predictionResults = clarifaiOutputs;
+                predictionResults = new ArrayList<>();
+                for (Concept concept : clarifaiOutputs){
+                    predictionResults.add(concept.name());
+                }
                 recyclerViewSetup();
                 progressBar.setVisibility(View.GONE);
                 Log.d(TAG, "onPost");

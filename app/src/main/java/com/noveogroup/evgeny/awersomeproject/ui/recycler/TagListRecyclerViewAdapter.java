@@ -23,12 +23,12 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
     private List<ChosenTag> chosenTags;
     private ItemTapListener itemTapListener;
 
-    public TagListRecyclerViewAdapter(List<Concept> data, ItemTapListener itemTapListener) {
+    public TagListRecyclerViewAdapter(List<String> data, ItemTapListener itemTapListener) {
 
         this.itemTapListener = itemTapListener;
         this.chosenTags = new ArrayList<>();
-        for (Concept concept : data) {
-            chosenTags.add(new ChosenTag(concept.name()));
+        for (String tag : data) {
+            chosenTags.add(new ChosenTag(tag));
         }
     }
 
