@@ -16,13 +16,11 @@ import com.google.maps.android.SphericalUtil;
 
 
 public class LocationUtil {
-    private final LocationRequest locationRequest;
     private final GoogleApiClient googleApiClient;
     private UpdatedLocationHandler updatedLocationHandler;
     private Context context;
 
     public LocationUtil(Context context) {
-        locationRequest = LocationRequest.create();
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -31,7 +29,7 @@ public class LocationUtil {
                         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             return;
                         }
-                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, location -> updatedLocationHandler.handleUpdatedLocation(location));
+                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, getLocationRequest(), location -> updatedLocationHandler.handleUpdatedLocation(location));
                     }
 
                     @Override
@@ -45,15 +43,24 @@ public class LocationUtil {
                 .build();
     }
 
-    public interface UpdatedLocationHandler {
-        void handleUpdatedLocation(Location location);
-    }
-
     public static LocationUtil getInstance(Context context, UpdatedLocationHandler updatedLocationHandler) {
         LocationUtil locationUtilInstance = new LocationUtil(context);
         locationUtilInstance.updatedLocationHandler = updatedLocationHandler;
         locationUtilInstance.context = context;
         return locationUtilInstance;
+    }
+
+    public static double getDistance(LatLng from, LatLng to) {
+        return SphericalUtil.computeDistanceBetween(from, to);
+    }
+
+    private LocationRequest getLocationRequest() {
+        LocationRequest locationRequest = new LocationRequest();
+
+        locationRequest.setInterval(5000);
+        locationRequest.setSmallestDisplacement(5);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
     }
 
     public void apiConnect() {
@@ -64,7 +71,7 @@ public class LocationUtil {
         googleApiClient.disconnect();
     }
 
-    public static double getDistance(LatLng from, LatLng to) {
-        return SphericalUtil.computeDistanceBetween(from, to);
+    public interface UpdatedLocationHandler {
+        void handleUpdatedLocation(Location location);
     }
 }

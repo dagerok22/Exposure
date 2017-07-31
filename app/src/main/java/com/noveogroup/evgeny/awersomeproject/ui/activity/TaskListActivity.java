@@ -80,7 +80,6 @@ public class TaskListActivity extends AppCompatActivity {
             this.currentLocation = location;
             adapter.setCurrentLocation(currentLocation);
             adapter.notifyDataSetChanged();
-
         });
     }
 
