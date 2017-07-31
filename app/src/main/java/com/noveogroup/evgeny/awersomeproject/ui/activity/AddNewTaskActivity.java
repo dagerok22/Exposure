@@ -1,18 +1,28 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
+import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +41,9 @@ public class AddNewTaskActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_CHOOSE_TAGS = 2;
     String currentPhotoPath;
+    private LocationRequest locationRequest;
+    private GoogleApiClient googleApiClient;
+    private LocationUtil locationUtil;
 
 
     @Override
@@ -68,6 +81,22 @@ public class AddNewTaskActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (locationUtil != null) {
+            locationUtil.apiConnect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (locationUtil != null) {
+            locationUtil.apiDisconnect();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             startActivityForResult(NewPhotoActivity.newIntent(this, currentPhotoPath), REQUEST_CHOOSE_TAGS);
@@ -77,21 +106,25 @@ public class AddNewTaskActivity extends AppCompatActivity {
             String name = data.getStringExtra(NEW_TASK_NAME);
             float rating = 0;
             String authorName = "Evgen";
-            int authorId =5;
+            int authorId = 5;
             RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
-            dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
-                @Override
-                public void onSuccess(Uri imageRef) {
-                    dbApi.writeTask(name, tags, imageRef.toString(), new LatLng(0.65, 0.5), rating, authorId, authorName, new Date());
-                    Toast.makeText(getApplicationContext(),"Success send",Toast.LENGTH_SHORT).show();
-                }
+            locationUtil = LocationUtil.getInstance(this, location -> {
+                Toast.makeText(getApplicationContext(), "got location", Toast.LENGTH_SHORT).show();
+                dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
+                    @Override
+                    public void onSuccess(Uri imageRef) {
+                        dbApi.writeTask(name, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, authorName, new Date());
+                        Toast.makeText(getApplicationContext(), "Success send", Toast.LENGTH_SHORT).show();
+                    }
 
-                @Override
-                public void onFailure(Exception e) {
-                    Toast.makeText(getApplicationContext(),"Failure send",Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failure send", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                });
             });
+            locationUtil.apiConnect();
         }
     }
 

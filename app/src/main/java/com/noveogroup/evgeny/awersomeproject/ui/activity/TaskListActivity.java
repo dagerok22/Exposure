@@ -1,19 +1,16 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 
 import com.noveogroup.evgeny.awersomeproject.R;
@@ -21,6 +18,7 @@ import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.helper.ItemClickSupport;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TaskListRecyclerViewAdapter;
+import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,6 +40,9 @@ public class TaskListActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TaskListRecyclerViewAdapter adapter;
     List<Task> dataSet;
+    private boolean isDataAndLocationReady = false;
+    private Location currentLocation;
+    private LocationUtil locationUtil;
 
 
     @Override
@@ -59,13 +60,39 @@ public class TaskListActivity extends AppCompatActivity {
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
         initializeRecyclerView();
         initializeOnRecyclerItemClickListener();
+        synchronizeDataAndLocationFetching(dbApi);
+    }
+
+    private void synchronizeDataAndLocationFetching(RealTimeDBApi dbApi) {
         dbApi.getAllTasks(data -> {
             dataSet = data;
-            initializeAndSetUpAdapter();
-            progressBar.setVisibility(View.GONE);
+            if (isDataAndLocationReady) {
+                initializeAndSetUpAdapter();
+                progressBar.setVisibility(View.GONE);
+            }
+            isDataAndLocationReady = true;
+        });
+        locationUtil = LocationUtil.getInstance(this, location -> {
+            this.currentLocation = location;
+            if (isDataAndLocationReady) {
+                initializeAndSetUpAdapter();
+                progressBar.setVisibility(View.GONE);
+            }
+            isDataAndLocationReady = true;
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locationUtil.apiConnect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        locationUtil.apiDisconnect();
+    }
 
     private void initializeOnRecyclerItemClickListener() {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerViewIncome, position, v) -> {
@@ -113,7 +140,7 @@ public class TaskListActivity extends AppCompatActivity {
     }
 
     private void initializeAndSetUpAdapter() {
-        adapter = new TaskListRecyclerViewAdapter(dataSet);
+        adapter = new TaskListRecyclerViewAdapter(dataSet, currentLocation);
         recyclerView.setAdapter(adapter);
     }
 

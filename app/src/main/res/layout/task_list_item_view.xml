@@ -76,6 +76,15 @@
                 android:textSize="@dimen/task_item_author_size"
                 android:transitionName="age" />
 
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:textColor="@color/task_item_age_color"
+                android:textSize="@dimen/task_item_author_size"
+                android:transitionName="distance" />
+
         </LinearLayout>
     </android.support.v7.widget.LinearLayoutCompat>
 

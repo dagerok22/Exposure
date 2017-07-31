@@ -3,65 +3,68 @@ package com.noveogroup.evgeny.awersomeproject.util;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
-/**
- * Created by sergey on 29.07.17.
- */
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
 
 public class LocationUtil {
-    private LocationManager locationManager;
+    private final LocationRequest locationRequest;
+    private final GoogleApiClient googleApiClient;
+    UpdatedLocationHandler updatedLocationHandler;
     private Context context;
-    private boolean isGPSEnabled;
-    private LocationListener locationListener;
-    private static LocationUtil singletoneLocationUtil;
 
+    public LocationUtil(Context context) {
+        locationRequest = LocationRequest.create();
+        googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, location -> updatedLocationHandler.handleUpdatedLocation(location));
+                    }
 
-    public static LocationUtil getInstance(Context context) {
-        if (singletoneLocationUtil != null){
-            return singletoneLocationUtil;
-        }
-        singletoneLocationUtil = new LocationUtil();
-        singletoneLocationUtil.context = context;
-        singletoneLocationUtil.locationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
+                    @Override
+                    public void onConnectionSuspended(int i) {
 
-        singletoneLocationUtil.isGPSEnabled = singletoneLocationUtil.locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-        return singletoneLocationUtil;
+                    }
+                })
+                .addOnConnectionFailedListener(connectionResult -> {
+
+                })
+                .build();
     }
 
-    public void requestLocationUpdates(long minTimeBetweenUpdates, float minDistanceChangeForUpdates, LocationListener locationListener) {
-        this.locationListener = locationListener;
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                minTimeBetweenUpdates,
-                minDistanceChangeForUpdates,
-                locationListener);
+    public interface UpdatedLocationHandler {
+        void handleUpdatedLocation(Location location);
     }
 
-    public void removeLocationUpdates(){
-        locationManager.removeUpdates(locationListener);
+    public static LocationUtil getInstance(Context context, UpdatedLocationHandler updatedLocationHandler) {
+        LocationUtil locationUtilInstance = new LocationUtil(context);
+        locationUtilInstance.updatedLocationHandler = updatedLocationHandler;
+        locationUtilInstance.context = context;
+        return locationUtilInstance;
     }
 
-    private String getProviderName() {
-        LocationManager locationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
+    public void apiConnect() {
+        googleApiClient.connect();
+    }
 
-        Criteria criteria = new Criteria();
-        criteria.setPowerRequirement(Criteria.POWER_HIGH);
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setSpeedRequired(false);
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setCostAllowed(true);
+    public void apiDisconnect() {
+        googleApiClient.disconnect();
+    }
 
-        return locationManager.getBestProvider(criteria, true);
+    public static double getDistance(LatLng from, LatLng to) {
+        return SphericalUtil.computeDistanceBetween(from, to);
     }
 }

@@ -88,8 +88,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private Marker userMarker;
     private Logger logger;
     private LocationUtil locationUtil;
-    private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
+    private Location currentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +106,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         rating.setText(String.valueOf(currentTask.getRating()));
         age.setText(DateTransformerUtil.getAgeOfTask(currentTask.getDate(), getApplicationContext()));
 
+
         initializeMap();
         initializeUserLocationListener();
     }
@@ -114,46 +114,26 @@ public class TaskDetailsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        googleApiClient.connect();
+        locationUtil.apiConnect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (googleApiClient.isConnected()) {
-            googleApiClient.disconnect();
-        }
+        locationUtil.apiDisconnect();
     }
 
     private void initializeUserLocationListener() {
-        locationRequest = LocationRequest.create();
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            return;
-                        }
-                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, location -> {
-                            if (userMarker != null) {
-                                updateUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
-                            } else {
-                                addUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
-                            }
-                            progressBarMap.setVisibility(View.GONE);
-                        });
-                    }
+        locationUtil = LocationUtil.getInstance(this, location -> {
+            if (userMarker != null){
+                updateUserMarker(location);
+            }else {
+                addUserMarker(location);
+            }
+            this.currentLocation = location;
+            progressBarMap.setVisibility(View.GONE);
+        });
 
-                    @Override
-                    public void onConnectionSuspended(int i) {
-
-                    }
-                })
-                .addOnConnectionFailedListener(connectionResult -> {
-
-                })
-                .build();
     }
 
     public static Intent getIntent(Context context, Task task) {
@@ -188,14 +168,14 @@ public class TaskDetailsActivity extends AppCompatActivity {
         map.addCircle(circleOptions);
     }
 
-    private void addUserMarker(LatLng userPos) {
-        userMarker = map.addMarker(new MarkerOptions().position(userPos).title(getString(R.string.task_marker_sub)));
+    private void addUserMarker(Location userLocation) {
+        userMarker = map.addMarker(new MarkerOptions().position(new LatLng(userLocation.getLatitude(), userLocation.getLongitude())).title(getString(R.string.task_marker_sub)));
         userMarker.setTag(USER_MARKER_TAG);
         userMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
     }
 
-    private void updateUserMarker(LatLng userPos) {
-        userMarker.setPosition(userPos);
+    private void updateUserMarker(Location userLocation) {
+        userMarker.setPosition(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()));
     }
 
     @OnClick(R.id.TMP_BTN)
@@ -225,7 +205,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             //TODO переделай тэги
-            startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<String>(currentTask.getTags())));
+            startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<>(currentTask.getTags())));
         }
     }
 
