@@ -26,7 +26,7 @@ import static com.noveogroup.evgeny.awersomeproject.R.id.tags;
 
 
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.ViewHolder> {
-    private final Location currentLocation;
+    private Location currentLocation;
     private List<Task> dataSet;
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,9 +50,12 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         }
     }
 
-    public TaskListRecyclerViewAdapter(List<Task> data, Location currentLocation) {
-        this.dataSet = data;
+    public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
+    }
+
+    public void setDataSet(List<Task> dataSet) {
+        this.dataSet = dataSet;
     }
 
     @Override

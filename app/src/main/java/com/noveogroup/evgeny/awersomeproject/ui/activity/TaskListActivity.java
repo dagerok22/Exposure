@@ -12,7 +12,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
@@ -43,6 +46,7 @@ public class TaskListActivity extends AppCompatActivity {
     private boolean isDataAndLocationReady = false;
     private Location currentLocation;
     private LocationUtil locationUtil;
+    private FirebaseAuth firebaseAuth;
 
 
     @Override
@@ -57,7 +61,11 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
+        adapter = new TaskListRecyclerViewAdapter();
         initializeRecyclerView();
         initializeOnRecyclerItemClickListener();
         synchronizeDataAndLocationFetching(dbApi);
@@ -67,7 +75,7 @@ public class TaskListActivity extends AppCompatActivity {
         dbApi.getAllTasks(data -> {
             dataSet = data;
             if (isDataAndLocationReady) {
-                initializeAndSetUpAdapter();
+                setUpAdapter();
                 progressBar.setVisibility(View.GONE);
             }
             isDataAndLocationReady = true;
@@ -75,7 +83,7 @@ public class TaskListActivity extends AppCompatActivity {
         locationUtil = LocationUtil.getInstance(this, location -> {
             this.currentLocation = location;
             if (isDataAndLocationReady) {
-                initializeAndSetUpAdapter();
+                setUpAdapter();
                 progressBar.setVisibility(View.GONE);
             }
             isDataAndLocationReady = true;
@@ -142,8 +150,9 @@ public class TaskListActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
     }
 
-    private void initializeAndSetUpAdapter() {
-        adapter = new TaskListRecyclerViewAdapter(dataSet, currentLocation);
+    private void setUpAdapter() {
+        adapter.setCurrentLocation(currentLocation);
+        adapter.setDataSet(dataSet);
         recyclerView.setAdapter(adapter);
     }
 

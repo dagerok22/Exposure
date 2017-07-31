@@ -18,7 +18,7 @@ import com.google.maps.android.SphericalUtil;
 public class LocationUtil {
     private final LocationRequest locationRequest;
     private final GoogleApiClient googleApiClient;
-    UpdatedLocationHandler updatedLocationHandler;
+    private UpdatedLocationHandler updatedLocationHandler;
     private Context context;
 
     public LocationUtil(Context context) {
