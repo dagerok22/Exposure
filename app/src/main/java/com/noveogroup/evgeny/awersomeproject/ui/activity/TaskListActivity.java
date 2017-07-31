@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,7 +42,7 @@ public class TaskListActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TaskListRecyclerViewAdapter adapter;
     List<Task> dataSet;
-    private boolean isDataAndLocationReady = false;
+    private boolean isDataOrLocationReady = false;
     private Location currentLocation;
     private LocationUtil locationUtil;
     private FirebaseAuth firebaseAuth;
@@ -63,7 +62,6 @@ public class TaskListActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
         adapter = new TaskListRecyclerViewAdapter();
         initializeRecyclerView();
@@ -74,19 +72,18 @@ public class TaskListActivity extends AppCompatActivity {
     private void synchronizeDataAndLocationFetching(RealTimeDBApi dbApi) {
         dbApi.getAllTasks(data -> {
             dataSet = data;
-            if (isDataAndLocationReady) {
+            if (isDataOrLocationReady) {
                 setUpAdapter();
                 progressBar.setVisibility(View.GONE);
             }
-            isDataAndLocationReady = true;
+            isDataOrLocationReady = true;
         });
         locationUtil = LocationUtil.getInstance(this, location -> {
             this.currentLocation = location;
-            if (isDataAndLocationReady) {
+            dbApi.getAllTasks(data -> {
+                dataSet = data;
                 setUpAdapter();
-                progressBar.setVisibility(View.GONE);
-            }
-            isDataAndLocationReady = true;
+            });
         });
     }
 
