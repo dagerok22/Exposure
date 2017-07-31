@@ -8,5 +8,5 @@
 
     <string name="settings_file">sp_settings_file</string>
     <string name="task_detail_transition_animation">is_task_detail_transition_animation_enabled</string>
-    <string name="task_marker_sub">Task</string>
+    <string name="task_marker_sub">You</string>
 </resources>
