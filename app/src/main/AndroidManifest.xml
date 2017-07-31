@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-feature android:name="android.hardware.location.gps" />
 
     <uses-permission
@@ -65,7 +66,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.activity.TaskExecutionActivity"></activity>
+        <activity android:name=".ui.activity.TaskExecutionActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

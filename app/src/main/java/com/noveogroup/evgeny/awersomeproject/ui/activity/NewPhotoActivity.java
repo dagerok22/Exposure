@@ -104,7 +104,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
 
     private void recyclerViewSetup() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TagListRecyclerViewAdapter(predictionResults, this);
+        adapter = new TagListRecyclerViewAdapter(predictionResults, this, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -120,7 +120,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
             @Override
             protected void onPostExecute(List<Concept> clarifaiOutputs) {
                 predictionResults = new ArrayList<>();
-                for (Concept concept : clarifaiOutputs){
+                for (Concept concept : clarifaiOutputs) {
                     predictionResults.add(concept.name());
                 }
                 recyclerViewSetup();

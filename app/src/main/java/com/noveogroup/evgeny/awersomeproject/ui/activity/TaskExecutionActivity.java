@@ -2,6 +2,7 @@ package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -95,10 +96,12 @@ public class TaskExecutionActivity extends AppCompatActivity {
 
     private void recyclerViewSetup() {
         photoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        photoTagsAdapter = new TagListRecyclerViewAdapter(predictionResults, null);
-        taskTagsAdapter =  new TagListRecyclerViewAdapter(taskTags, null);
+        photoTagsAdapter = new TagListRecyclerViewAdapter(predictionResults, null, this);
         photoRecyclerView.setAdapter(photoTagsAdapter);
+        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskTagsAdapter = new TagListRecyclerViewAdapter(taskTags, null, this);
+        taskTagsAdapter.setChooseColor(Color.RED);
+        taskTagsAdapter.setNotChooseColor(Color.GREEN);
         taskRecyclerView.setAdapter(taskTagsAdapter);
     }
 
@@ -114,7 +117,7 @@ public class TaskExecutionActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(List<Concept> clarifaiOutputs) {
                 predictionResults = new ArrayList<>();
-                for (Concept concept : clarifaiOutputs){
+                for (Concept concept : clarifaiOutputs) {
                     predictionResults.add(concept.name());
                 }
                 recyclerViewSetup();

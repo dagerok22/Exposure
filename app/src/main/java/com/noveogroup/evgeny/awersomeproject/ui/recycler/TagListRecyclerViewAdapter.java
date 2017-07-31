@@ -1,5 +1,6 @@
 package com.noveogroup.evgeny.awersomeproject.ui.recycler;
 
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -16,15 +17,28 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import clarifai2.dto.prediction.Concept;
 
 
 public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecyclerViewAdapter.ViewHolder> {
     private List<ChosenTag> chosenTags;
     private ItemTapListener itemTapListener;
+    private int notChooseColor;
 
-    public TagListRecyclerViewAdapter(List<String> data, ItemTapListener itemTapListener) {
+    public void setNotChooseColor(int notChooseColor) {
+        this.notChooseColor = notChooseColor;
+    }
 
+    public void setChooseColor(int chooseColor) {
+        this.chooseColor = chooseColor;
+    }
+
+    private int chooseColor;
+    private Context context;
+
+    public TagListRecyclerViewAdapter(List<String> data, ItemTapListener itemTapListener, Context context) {
+        this.context = context;
+        this.chooseColor = ContextCompat.getColor(context, R.color.colorPrimary);
+        this.notChooseColor = ContextCompat.getColor(context, R.color.cardview_light_background);
         this.itemTapListener = itemTapListener;
         this.chosenTags = new ArrayList<>();
         for (String tag : data) {
@@ -120,9 +134,9 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
             tag.setText(chosenTags.get(position).getTag());
             currentPosition = position;
             if (chosenTags.get(position).isChosen()) {
-                cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.toolbar));
+                cardView.setBackgroundColor(chooseColor);
             } else {
-                cardView.setBackgroundColor(ContextCompat.getColor(tag.getContext(), R.color.cardview_light_background));
+                cardView.setBackgroundColor(notChooseColor);
             }
         }
     }
