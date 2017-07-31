@@ -37,6 +37,8 @@ public class TaskExecutionActivity extends AppCompatActivity {
     public static final String PHOTO_PATH = "photo_path";
     public static final String TASK_NAME = "task_name";
     public static final String TAGS = "tags";
+
+    //FIXME why package-private?
     static final String LOG_TAG = "TaskExecutionActivity";
     @BindView(R.id.photo_view)
     public ImageView imageView;
@@ -52,6 +54,8 @@ public class TaskExecutionActivity extends AppCompatActivity {
     ProgressBar progressBar2;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    //FIXME no reasons to be public, package-private, protected? Then should be private
     List<String> predictionResults;
     ArrayList<String> taskTags;
     TagListRecyclerViewAdapter photoTagsAdapter;
@@ -95,6 +99,7 @@ public class TaskExecutionActivity extends AppCompatActivity {
     }
 
     private void recyclerViewSetup() {
+        //FIXME use indents
         photoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         photoTagsAdapter = new TagListRecyclerViewAdapter(predictionResults, null, this);
         photoTagsAdapter.setChooseColor(Color.GREEN);
@@ -106,6 +111,7 @@ public class TaskExecutionActivity extends AppCompatActivity {
         taskRecyclerView.setAdapter(taskTagsAdapter);
     }
 
+    //TODO: wrap into rxJava Observable, segregate into a separate class
     void startAsyncTask() {
         AsyncTask<Void, Void, List<Concept>> asyncTask = new AsyncTask<Void, Void, List<Concept>>() {
             @Override

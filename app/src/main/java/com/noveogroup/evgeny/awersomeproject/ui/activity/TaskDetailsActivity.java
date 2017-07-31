@@ -103,6 +103,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        //TODO: initialize in BaseActivity class
         logger = LoggerFactory.getLogger(TaskDetailsActivity.class);
 
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
@@ -206,7 +207,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         }
     }
 
-
+    //FIXME extract into a separate class. Into utils class for example
     private File createImageFile() throws IOException {
         // Create an image file name
         @SuppressLint("SimpleDateFormat")

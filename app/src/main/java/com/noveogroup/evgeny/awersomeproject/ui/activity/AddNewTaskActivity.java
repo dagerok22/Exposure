@@ -34,6 +34,7 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
     public static final String NEW_TASK_NAME = "NEW_TASK_NAME";
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_CHOOSE_TAGS = 2;
+    //FIXME Why package-private?
     String currentPhotoPath;
     ArrayList<String> tags;
     String taskName;
@@ -63,6 +64,7 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
+                //FIXME use logback
                 Log.d("SCREEN3", "File create err: ", ex);
             }
             // Continue only if the File was successfully created
@@ -87,7 +89,7 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
         }
     }
 
-
+    //FIXME !!! CODE DUPLICATION. The same as in the TaskDetailsActivity
     private File createImageFile() throws IOException {
         // Create an image file name
         @SuppressLint("SimpleDateFormat")

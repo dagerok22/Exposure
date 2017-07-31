@@ -108,6 +108,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
         recyclerView.setAdapter(adapter);
     }
 
+    //FIXME !!! CODE DUPLICATION !!! TaskExecutionActivity has the same code
     void startAsyncTask() {
         AsyncTask<Void, Void, List<Concept>> asyncTask = new AsyncTask<Void, Void, List<Concept>>() {
             @Override

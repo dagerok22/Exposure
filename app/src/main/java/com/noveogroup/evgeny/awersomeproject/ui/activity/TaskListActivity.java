@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+//FIXME reorganize methods declarations order
 public class TaskListActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
     public static final String DATASET_KEY = "dataset";
@@ -51,12 +51,13 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         ButterKnife.bind(this);
-        //dataSet = new ArrayList<>();
+        //dataSet = new ArrayList<>();//FIXME redundant empty lines
 
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+        //FIXME extract this variable as a class field
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
         adapter = new TaskListRecyclerViewAdapter();
         initializeRecyclerView();
@@ -70,6 +71,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         super.onDestroy();
     }
 
+    //FIXME don't pass the RealTimeDBApi instance as a method parameter. It should be a class field
     private void synchronizeDataAndLocationFetching(RealTimeDBApi dbApi) {
         dbApi.getAllTasks(data -> {
             dataSet = data;
