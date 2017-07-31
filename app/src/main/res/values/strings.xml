@@ -10,4 +10,5 @@
     <string name="task_detail_transition_animation">is_task_detail_transition_animation_enabled</string>
     <string name="task_marker_sub">You</string>
     <string name="find_user_coords">Trying to find you</string>
+    <string name="web_client_id">117598585189-honv9ja663on3ggodbs5rkckgrk32jh5.apps.googleusercontent.com</string>
 </resources>
