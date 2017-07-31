@@ -5,17 +5,44 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.auth.api.signin.SignInAccount;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.noveogroup.evgeny.awersomeproject.R;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+    private static final int RC_SIGN_IN = 1;
+    private GoogleApiClient googleApiClient;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser currentUser;
+
+    @BindView(R.id.sign_in_button)
+    SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +51,81 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         System.out.println("asd");
         requestLocationPermission();
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestEmail()
+                .build();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, connectionResult -> {})
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        if (currentUser == null){
+            signInButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        currentUser = firebaseAuth.getCurrentUser();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+            }
+        }
+    }
+
+    @OnClick(R.id.sign_in_button)
+    void onSignInButtonClicked(){
+        signIn();
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        updateUI(null);
+                    }
+                });
+    }
+
+    private void updateUI(FirebaseUser user){
+        if (user != null){
+            signInButton.setVisibility(View.GONE);
+        }
     }
 
     private void requestLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
