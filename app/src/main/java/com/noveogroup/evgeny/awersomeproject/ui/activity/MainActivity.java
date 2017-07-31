@@ -7,27 +7,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.auth.api.signin.SignInAccount;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -42,19 +33,17 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import clarifai2.dto.prediction.Concept;
 
 public class MainActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
 
-    Context context;
     private static final int RC_SIGN_IN = 1;
+    Context context;
+    @BindView(R.id.sign_in_button)
+    SignInButton signInButton;
     private GoogleApiClient googleApiClient;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
-
-    @BindView(R.id.sign_in_button)
-    SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +58,14 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                 .requestEmail()
                 .build();
         googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, connectionResult -> {})
+                .enableAutoManage(this, connectionResult -> {
+                })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if (currentUser == null){
+        if (currentUser == null) {
             signInButton.setVisibility(View.VISIBLE);
         }
     }
@@ -105,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     }
 
     @OnClick(R.id.sign_in_button)
-    void onSignInButtonClicked(){
+    void onSignInButtonClicked() {
         signIn();
     }
 
@@ -129,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                 });
     }
 
-    private void updateUI(FirebaseUser user){
-        if (user != null){
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
             signInButton.setVisibility(View.GONE);
         }
     }
@@ -165,12 +155,8 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                         dataSet.add(task);
                 }
                 Task randomTask = dataSet.get(new Random().nextInt(dataSet.size()));
-               // TaskExecutionActivity.newIntent(context,)
+                // TaskExecutionActivity.newIntent(context,)
             }
-
-
-//        Intent intent = new Intent(MainActivity.this, AddNewTaskActivity.class);
-//        startActivity(intent);
         });
     }
 
