@@ -37,6 +37,7 @@
                 class="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
             <ProgressBar
                 android:id="@+id/progress_bar_map"
                 style="@android:style/Widget.Material.ProgressBar.Small"
@@ -80,6 +81,13 @@
                 android:textAlignment="center"
                 android:transitionName="author" />
 
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:transitionName="distance" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,7 +98,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textAlignment="center"
+                    android:textAlignment="textStart"
                     android:transitionName="rating" />
 
                 <TextView
@@ -98,7 +106,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textAlignment="center"
+                    android:textAlignment="textEnd"
                     android:transitionName="age" />
 
             </LinearLayout>

@@ -97,7 +97,7 @@ public class TaskListActivity extends AppCompatActivity {
     private void initializeOnRecyclerItemClickListener() {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerViewIncome, position, v) -> {
             TaskListRecyclerViewAdapter adapter = (TaskListRecyclerViewAdapter) recyclerView.getAdapter();
-            Intent intent = TaskDetailsActivity.getIntent(this, adapter.getItems().get(position));
+            Intent intent = TaskDetailsActivity.getIntent(this, adapter.getItems().get(position), currentLocation);
             boolean isAnimationEnabled = getSharedPreferences(getString(R.string.settings_file), MODE_PRIVATE).getBoolean(getString(R.string.task_detail_transition_animation), true);
             ActivityOptionsCompat options = isAnimationEnabled ? initializeTransitionAnimation(position) : null;
 
@@ -118,13 +118,16 @@ public class TaskListActivity extends AppCompatActivity {
                 Pair.create(viewHolder.itemView.findViewById(R.id.rating), "rating");
         Pair<View, String> agePair =
                 Pair.create(viewHolder.itemView.findViewById(R.id.age), "age");
+        Pair<View, String> distancePair =
+                Pair.create(viewHolder.itemView.findViewById(R.id.distance), "distance");
         return ActivityOptionsCompat
                 .makeSceneTransitionAnimation(this,
                         titlePair,
                         tagsPair,
                         authorPair,
                         ratingPair,
-                        agePair);
+                        agePair,
+                        distancePair);
     }
 
     @Override

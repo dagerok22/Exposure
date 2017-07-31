@@ -69,8 +69,8 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));
         holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
-        holder.rating.setText(String.format(Locale.ENGLISH, "%f", task.getRating()));
-        holder.distance.setText(String.format(Locale.ENGLISH, "%d km", (int)(LocationUtil.getDistance(
+        holder.rating.setText(String.format(Locale.ENGLISH, "%.1f", task.getRating()));
+        holder.distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                         new LatLng(task.getLat(), task.getLng()))
                 ) / 1000)

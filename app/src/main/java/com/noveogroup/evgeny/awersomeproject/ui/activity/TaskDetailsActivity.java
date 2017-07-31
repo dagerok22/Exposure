@@ -1,34 +1,22 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -51,6 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +50,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 3;
     private static final String KEY_TASK_ITEM = "TASK_ITEM";
     private static final String USER_MARKER_TAG = "You";
+    private static final String KEY_CURRENT_LOCATION_LAT = "KEY_CURRENT_LOCATION_LAT";
+    private static final String KEY_CURRENT_LOCATION_LNG = "KEY_CURRENT_LOCATION_LNG";
 
 
     @BindView(R.id.progress_bar_map)
@@ -71,6 +62,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
     TextView title;
     @BindView(R.id.tags)
     TextView tags;
+    @BindView(R.id.distance)
+    TextView distance;
     @BindView(R.id.author)
     TextView author;
     @BindView(R.id.rating)
@@ -89,6 +82,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private Logger logger;
     private LocationUtil locationUtil;
     private Location currentLocation;
+    private LatLng currentPosition;
+    private LatLng taskPosition;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +96,17 @@ public class TaskDetailsActivity extends AppCompatActivity {
         logger = LoggerFactory.getLogger(TaskDetailsActivity.class);
 
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
+        currentPosition = new LatLng(getIntent().getDoubleExtra(KEY_CURRENT_LOCATION_LAT, 0.0), getIntent().getDoubleExtra(KEY_CURRENT_LOCATION_LNG, 0.0));
+        taskPosition = new LatLng(currentTask.getLat(), currentTask.getLng());
         title.setText(currentTask.getName());
         tags.setText(StringUtil.getTagsString(currentTask.getTags()));
         author.setText(currentTask.getAuthorName());
         rating.setText(String.valueOf(currentTask.getRating()));
+        distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
+                currentPosition,
+                taskPosition)
+                ) / 1000)
+        );
         age.setText(DateTransformerUtil.getAgeOfTask(currentTask.getDate(), getApplicationContext()));
 
 
@@ -123,6 +126,14 @@ public class TaskDetailsActivity extends AppCompatActivity {
         locationUtil.apiDisconnect();
     }
 
+    private void updateDistance(){
+        distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
+                currentPosition,
+                taskPosition)
+                ) / 1000)
+        );
+    }
+
     private void initializeUserLocationListener() {
         locationUtil = LocationUtil.getInstance(this, location -> {
             if (userMarker != null){
@@ -131,14 +142,19 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 addUserMarker(location);
             }
             this.currentLocation = location;
+            this.currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+            updateDistance();
             progressBarMap.setVisibility(View.GONE);
         });
 
     }
 
-    public static Intent getIntent(Context context, Task task) {
+    public static Intent getIntent(Context context, Task task, Location currentLocation) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_TASK_ITEM, task);
+        LatLng currentPos = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        bundle.putDouble(KEY_CURRENT_LOCATION_LAT, currentPos.latitude);
+        bundle.putDouble(KEY_CURRENT_LOCATION_LNG, currentPos.longitude);
         Intent intent = new Intent(context, TaskDetailsActivity.class);
         intent.putExtras(bundle);
         return intent;
