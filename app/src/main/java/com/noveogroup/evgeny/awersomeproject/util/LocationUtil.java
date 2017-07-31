@@ -17,17 +17,21 @@ public class LocationUtil {
     private Context context;
     private boolean isGPSEnabled;
     private LocationListener locationListener;
+    private static LocationUtil singletoneLocationUtil;
 
 
     public static LocationUtil getInstance(Context context) {
-        LocationUtil locationUtil = new LocationUtil();
-        locationUtil.context = context;
-        locationUtil.locationManager = (LocationManager) context
+        if (singletoneLocationUtil != null){
+            return singletoneLocationUtil;
+        }
+        singletoneLocationUtil = new LocationUtil();
+        singletoneLocationUtil.context = context;
+        singletoneLocationUtil.locationManager = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);
 
-        locationUtil.isGPSEnabled = locationUtil.locationManager
+        singletoneLocationUtil.isGPSEnabled = singletoneLocationUtil.locationManager
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
-        return locationUtil;
+        return singletoneLocationUtil;
     }
 
     public void requestLocationUpdates(long minTimeBetweenUpdates, float minDistanceChangeForUpdates, LocationListener locationListener) {
@@ -36,7 +40,7 @@ public class LocationUtil {
             return;
         }
         locationManager.requestLocationUpdates(
-                getProviderName(),
+                LocationManager.NETWORK_PROVIDER,
                 minTimeBetweenUpdates,
                 minDistanceChangeForUpdates,
                 locationListener);
@@ -52,7 +56,7 @@ public class LocationUtil {
 
         Criteria criteria = new Criteria();
         criteria.setPowerRequirement(Criteria.POWER_HIGH);
-        criteria.setAccuracy(Criteria.ACCURACY_MEDIUM);
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setSpeedRequired(false);
         criteria.setAltitudeRequired(false);
         criteria.setBearingRequired(false);

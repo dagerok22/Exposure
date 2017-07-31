@@ -78,6 +78,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private GoogleMap map;
     private Marker userMarker;
     private Logger logger;
+    private LocationUtil locationUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +100,20 @@ public class TaskDetailsActivity extends AppCompatActivity {
         initializeUserLocationListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initializeUserLocationListener();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationUtil.removeLocationUpdates();
+    }
+
     private void initializeUserLocationListener() {
-        LocationUtil locationUtil = LocationUtil.getInstance(this);
+        locationUtil = LocationUtil.getInstance(this);
         locationUtil.requestLocationUpdates(1000, 0f, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -148,6 +161,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
             LatLng taskPos = new LatLng(currentTask.getLat(), currentTask.getLng());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(taskPos, 16.0f));
             map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            map.setMinZoomPreference(16.0f);
             addTaskCircle(taskPos);
             // Add a marker in Sydney, Australia, and move the camera.
         });
@@ -165,7 +179,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private void addUserMarker(LatLng userPos) {
         userMarker = map.addMarker(new MarkerOptions().position(userPos).title(getString(R.string.task_marker_sub)));
         userMarker.setTag(USER_MARKER_TAG);
-        userMarker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.user_location));
+        userMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
     }
 
     private void updateUserMarker(LatLng userPos) {
