@@ -97,6 +97,7 @@ public class TaskExecutionActivity extends AppCompatActivity {
     private void recyclerViewSetup() {
         photoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         photoTagsAdapter = new TagListRecyclerViewAdapter(predictionResults, null, this);
+        photoTagsAdapter.setChooseColor(Color.GREEN);
         photoRecyclerView.setAdapter(photoTagsAdapter);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskTagsAdapter = new TagListRecyclerViewAdapter(taskTags, null, this);
