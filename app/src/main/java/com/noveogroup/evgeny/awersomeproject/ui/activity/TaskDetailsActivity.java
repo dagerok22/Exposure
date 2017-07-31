@@ -1,14 +1,19 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +25,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -79,6 +88,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private Marker userMarker;
     private Logger logger;
     private LocationUtil locationUtil;
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,46 +112,48 @@ public class TaskDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        initializeUserLocationListener();
+    protected void onStart() {
+        super.onStart();
+        googleApiClient.connect();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        locationUtil.removeLocationUpdates();
+    protected void onStop() {
+        super.onStop();
+        if (googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
     }
 
     private void initializeUserLocationListener() {
-        locationUtil = LocationUtil.getInstance(this);
-        locationUtil.requestLocationUpdates(1000, 0f, new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                logger.error("OnLocationChanged: {}", location);
-                if (userMarker != null) {
-                    updateUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
-                } else {
-                    addUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
-                }
-                progressBarMap.setVisibility(View.GONE);
-            }
+        locationRequest = LocationRequest.create();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, location -> {
+                            if (userMarker != null) {
+                                updateUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
+                            } else {
+                                addUserMarker(new LatLng(location.getLatitude(), location.getLongitude()));
+                            }
+                            progressBarMap.setVisibility(View.GONE);
+                        });
+                    }
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-                logger.error("onStatusChanged: {}", s);
-            }
+                    @Override
+                    public void onConnectionSuspended(int i) {
 
-            @Override
-            public void onProviderEnabled(String s) {
-                logger.error("onProviderEnabled: {}", s);
-            }
+                    }
+                })
+                .addOnConnectionFailedListener(connectionResult -> {
 
-            @Override
-            public void onProviderDisabled(String s) {
-                logger.error("onProviderDisabled: {}", s);
-            }
-        });
+                })
+                .build();
     }
 
     public static Intent getIntent(Context context, Task task) {
@@ -163,7 +176,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
             map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             map.setMinZoomPreference(16.0f);
             addTaskCircle(taskPos);
-            // Add a marker in Sydney, Australia, and move the camera.
         });
     }
 

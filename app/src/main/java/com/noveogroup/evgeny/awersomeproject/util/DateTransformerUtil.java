@@ -71,6 +71,7 @@ public class DateTransformerUtil {
             stringBuilder.append(context.getResources().getString(R.string.less_then_hour_task_age));
 
         }
+        stringBuilder.append(" ago");
         return stringBuilder.toString();
     }
 }
