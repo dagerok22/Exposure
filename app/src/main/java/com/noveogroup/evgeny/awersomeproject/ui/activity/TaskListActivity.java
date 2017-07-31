@@ -70,6 +70,9 @@ public class TaskListActivity extends AppCompatActivity {
         dbApi.getAllTasks(data -> {
             dataSet = data;
             adapter.setDataSet(dataSet);
+            if (currentLocation != null) {
+                adapter.setCurrentLocation(currentLocation);
+            }
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
         });
@@ -77,6 +80,7 @@ public class TaskListActivity extends AppCompatActivity {
             this.currentLocation = location;
             adapter.setCurrentLocation(currentLocation);
             adapter.notifyDataSetChanged();
+
         });
     }
 
