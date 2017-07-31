@@ -16,39 +16,13 @@ import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import static com.noveogroup.evgeny.awersomeproject.R.id.rating;
-import static com.noveogroup.evgeny.awersomeproject.R.id.tags;
 
 
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.ViewHolder> {
     private Location currentLocation;
     private List<Task> dataSet;
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView title;
-        TextView tags;
-        TextView rating;
-        TextView author;
-        TextView age;
-        TextView distance;
-
-        ViewHolder(View v) {
-            super(v);
-            imageView = v.findViewById(R.id.image);
-            title = v.findViewById(R.id.title);
-            tags = v.findViewById(R.id.tags);
-            author = v.findViewById(R.id.author);
-            age = v.findViewById(R.id.age);
-            rating = v.findViewById(R.id.rating);
-            distance = v.findViewById(R.id.distance);
-        }
-    }
 
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
@@ -73,11 +47,14 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));
         holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
         holder.rating.setText(String.format(Locale.ENGLISH, "%.1f", task.getRating()));
-        holder.distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                        new LatLng(task.getLat(), task.getLng()))
-                ) / 1000)
-        );
+        if (currentLocation != null) {
+            holder.distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
+                    new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    new LatLng(task.getLat(), task.getLng()))) / 1000));
+        } else {
+            holder.distance.setText("trying get your coords");
+        }
+
         Glide.with(holder.title.getContext())
                 .load(task.getImageUrl())
                 .centerCrop()
@@ -89,18 +66,39 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         return dataSet;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
     public void setItems(final List<Task> newItems) {
         dataSet.clear();
         dataSet.addAll(newItems);
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemCount() {
         return dataSet.size();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        TextView title;
+        TextView tags;
+        TextView rating;
+        TextView author;
+        TextView age;
+        TextView distance;
+
+        ViewHolder(View v) {
+            super(v);
+            imageView = v.findViewById(R.id.image);
+            title = v.findViewById(R.id.title);
+            tags = v.findViewById(R.id.tags);
+            author = v.findViewById(R.id.author);
+            age = v.findViewById(R.id.age);
+            rating = v.findViewById(R.id.rating);
+            distance = v.findViewById(R.id.distance);
+        }
     }
 }

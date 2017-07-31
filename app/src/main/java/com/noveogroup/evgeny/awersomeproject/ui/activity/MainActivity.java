@@ -42,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @OnClick(R.id.get_random_task_button)
+    public void onRandomClick() {
+
+
+//        Intent intent = new Intent(MainActivity.this, AddNewTaskActivity.class);
+//        startActivity(intent);
+    }
+
     private ProgressDialog getProgressDialog(){
         ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setTitle("Wait");

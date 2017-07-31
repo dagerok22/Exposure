@@ -23,7 +23,6 @@ import com.noveogroup.evgeny.awersomeproject.ui.recycler.TaskListRecyclerViewAda
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,7 +41,6 @@ public class TaskListActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TaskListRecyclerViewAdapter adapter;
     List<Task> dataSet;
-    private boolean isDataOrLocationReady = false;
     private Location currentLocation;
     private LocationUtil locationUtil;
     private FirebaseAuth firebaseAuth;
@@ -53,13 +51,12 @@ public class TaskListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         ButterKnife.bind(this);
-        if (savedInstanceState != null) {
-            dataSet = (List<Task>) savedInstanceState.getSerializable(DATASET_KEY);
-        } else {
-            dataSet = new ArrayList<>();
-        }
+        //dataSet = new ArrayList<>();
 
 
+//        firebaseAuth = FirebaseAuth.getInstance();
+//        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+//        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
@@ -72,18 +69,14 @@ public class TaskListActivity extends AppCompatActivity {
     private void synchronizeDataAndLocationFetching(RealTimeDBApi dbApi) {
         dbApi.getAllTasks(data -> {
             dataSet = data;
-            if (isDataOrLocationReady) {
-                setUpAdapter();
-                progressBar.setVisibility(View.GONE);
-            }
-            isDataOrLocationReady = true;
+            adapter.setDataSet(dataSet);
+            recyclerView.setAdapter(adapter);
+            progressBar.setVisibility(View.GONE);
         });
         locationUtil = LocationUtil.getInstance(this, location -> {
             this.currentLocation = location;
-            dbApi.getAllTasks(data -> {
-                dataSet = data;
-                setUpAdapter();
-            });
+            adapter.setCurrentLocation(currentLocation);
+            adapter.notifyDataSetChanged();
         });
     }
 
