@@ -45,7 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TaskDetailsActivity extends AppCompatActivity {
+public class TaskDetailsActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
     static final int REQUEST_TAKE_PHOTO = 3;
     private static final String KEY_TASK_ITEM = "TASK_ITEM";
@@ -85,6 +85,16 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private LatLng currentPosition;
     private LatLng taskPosition;
 
+    public static Intent getIntent(Context context, Task task, Location currentLocation) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_TASK_ITEM, task);
+//        LatLng currentPos = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+//        bundle.putDouble(KEY_CURRENT_LOCATION_LAT, currentPos.latitude);
+//        bundle.putDouble(KEY_CURRENT_LOCATION_LNG, currentPos.longitude);
+        Intent intent = new Intent(context, TaskDetailsActivity.class);
+        intent.putExtras(bundle);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,70 +106,41 @@ public class TaskDetailsActivity extends AppCompatActivity {
         logger = LoggerFactory.getLogger(TaskDetailsActivity.class);
 
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
-        currentPosition = new LatLng(getIntent().getDoubleExtra(KEY_CURRENT_LOCATION_LAT, 0.0), getIntent().getDoubleExtra(KEY_CURRENT_LOCATION_LNG, 0.0));
+        currentLocation = LocationUtil.getLastUpdatedLocation();
         taskPosition = new LatLng(currentTask.getLat(), currentTask.getLng());
         title.setText(currentTask.getName());
         tags.setText(StringUtil.getTagsString(currentTask.getTags()));
         author.setText(currentTask.getAuthorName());
         rating.setText(String.valueOf(currentTask.getRating()));
-        distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
-                currentPosition,
-                taskPosition)
-                ) / 1000)
-        );
+
+        if (currentLocation != null) {
+            distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
+                    new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    taskPosition)
+            ) / 1000));
+        } else {
+            distance.setText(R.string.find_user_coords);
+        }
         age.setText(DateTransformerUtil.getAgeOfTask(currentTask.getDate(), getApplicationContext()));
 
 
         initializeMap();
-        initializeUserLocationListener();
+        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        locationUtil.apiConnect();
+    protected void onDestroy() {
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
+        super.onDestroy();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        locationUtil.apiDisconnect();
-    }
-
-    private void updateDistance(){
+    private void updateDistance() {
         distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
                 currentPosition,
                 taskPosition)
                 ) / 1000)
         );
     }
-
-    private void initializeUserLocationListener() {
-        locationUtil = LocationUtil.getInstance(this, location -> {
-            if (userMarker != null){
-                updateUserMarker(location);
-            }else {
-                addUserMarker(location);
-            }
-            this.currentLocation = location;
-            this.currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-            updateDistance();
-            progressBarMap.setVisibility(View.GONE);
-        });
-
-    }
-
-    public static Intent getIntent(Context context, Task task, Location currentLocation) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_TASK_ITEM, task);
-        LatLng currentPos = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        bundle.putDouble(KEY_CURRENT_LOCATION_LAT, currentPos.latitude);
-        bundle.putDouble(KEY_CURRENT_LOCATION_LNG, currentPos.longitude);
-        Intent intent = new Intent(context, TaskDetailsActivity.class);
-        intent.putExtras(bundle);
-        return intent;
-    }
-
 
     private void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -240,6 +221,19 @@ public class TaskDetailsActivity extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    @Override
+    public void handleUpdatedLocation(Location location) {
+        if (userMarker != null) {
+            updateUserMarker(location);
+        } else {
+            addUserMarker(location);
+        }
+        this.currentLocation = location;
+        this.currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+        updateDistance();
+        progressBarMap.setVisibility(View.GONE);
     }
 
 }

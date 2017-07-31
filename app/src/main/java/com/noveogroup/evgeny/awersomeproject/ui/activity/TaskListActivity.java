@@ -29,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TaskListActivity extends AppCompatActivity {
+public class TaskListActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
     public static final String DATASET_KEY = "dataset";
 
@@ -42,7 +42,6 @@ public class TaskListActivity extends AppCompatActivity {
     TaskListRecyclerViewAdapter adapter;
     List<Task> dataSet;
     private Location currentLocation;
-    private LocationUtil locationUtil;
     private FirebaseAuth firebaseAuth;
 
 
@@ -51,9 +50,6 @@ public class TaskListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         ButterKnife.bind(this);
-        //dataSet = new ArrayList<>();
-
-
 //        firebaseAuth = FirebaseAuth.getInstance();
 //        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 //        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
@@ -66,6 +62,12 @@ public class TaskListActivity extends AppCompatActivity {
         synchronizeDataAndLocationFetching(dbApi);
     }
 
+    @Override
+    protected void onDestroy() {
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
+        super.onDestroy();
+    }
+
     private void synchronizeDataAndLocationFetching(RealTimeDBApi dbApi) {
         dbApi.getAllTasks(data -> {
             dataSet = data;
@@ -76,24 +78,11 @@ public class TaskListActivity extends AppCompatActivity {
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
         });
-        locationUtil = LocationUtil.getInstance(this, location -> {
-            this.currentLocation = location;
-            adapter.setCurrentLocation(currentLocation);
-            adapter.notifyDataSetChanged();
-        });
+        LocationUtil.getInstance(this)
+                .addLocationUpdatesListener(this);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        locationUtil.apiConnect();
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        locationUtil.apiDisconnect();
-    }
 
     private void initializeOnRecyclerItemClickListener() {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerViewIncome, position, v) -> {
@@ -143,16 +132,18 @@ public class TaskListActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
     }
 
-    private void setUpAdapter() {
-        adapter.setCurrentLocation(currentLocation);
-        adapter.setDataSet(dataSet);
-        recyclerView.setAdapter(adapter);
-    }
-
     @OnClick(R.id.fab)
     void onAddTaskFabClicked() {
         Intent intent = new Intent(this, AddNewTaskActivity.class);
         startActivity(intent);
     }
 
+    @Override
+    public void handleUpdatedLocation(Location location) {
+        currentLocation = location;
+        if (dataSet != null) {
+            adapter.setCurrentLocation(currentLocation);
+            adapter.notifyDataSetChanged();
+        }
+    }
 }

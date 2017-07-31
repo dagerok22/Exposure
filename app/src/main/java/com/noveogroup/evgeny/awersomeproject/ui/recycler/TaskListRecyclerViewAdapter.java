@@ -47,12 +47,13 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));
         holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
         holder.rating.setText(String.format(Locale.ENGLISH, "%.1f", task.getRating()));
+        currentLocation = LocationUtil.getLastUpdatedLocation();8
         if (currentLocation != null) {
             holder.distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
                     new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                     new LatLng(task.getLat(), task.getLng()))) / 1000));
         } else {
-            holder.distance.setText("trying get your coords");
+            holder.distance.setText(R.string.find_user_coords);
         }
 
         Glide.with(holder.title.getContext())

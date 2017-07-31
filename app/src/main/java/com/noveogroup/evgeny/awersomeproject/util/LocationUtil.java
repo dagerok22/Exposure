@@ -14,13 +14,17 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
+
 
 public class LocationUtil {
+    static private Location lastUpdatedLocation;
+    static private LocationUtil locationUtil;
     private final GoogleApiClient googleApiClient;
-    private UpdatedLocationHandler updatedLocationHandler;
-    private Context context;
+    private ArrayList<UpdatedLocationHandler> updatedLocationHandlers;
 
-    public LocationUtil(Context context) {
+    private LocationUtil(Context context) {
+        updatedLocationHandlers = new ArrayList<>();
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -29,7 +33,7 @@ public class LocationUtil {
                         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             return;
                         }
-                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, getLocationRequest(), location -> updatedLocationHandler.handleUpdatedLocation(location));
+                        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, getLocationRequest(), location -> updateAllListeners(location));
                     }
 
                     @Override
@@ -43,15 +47,40 @@ public class LocationUtil {
                 .build();
     }
 
-    public static LocationUtil getInstance(Context context, UpdatedLocationHandler updatedLocationHandler) {
-        LocationUtil locationUtilInstance = new LocationUtil(context);
-        locationUtilInstance.updatedLocationHandler = updatedLocationHandler;
-        locationUtilInstance.context = context;
-        return locationUtilInstance;
+    public static Location getLastUpdatedLocation() {
+        return lastUpdatedLocation;
+    }
+
+    public static LocationUtil getInstance(Context context) {
+        if (locationUtil == null) {
+            locationUtil = new LocationUtil(context);
+        }
+        return locationUtil;
     }
 
     public static double getDistance(LatLng from, LatLng to) {
         return SphericalUtil.computeDistanceBetween(from, to);
+    }
+
+    public void addLocationUpdatesListener(UpdatedLocationHandler handler) {
+        updatedLocationHandlers.add(handler);
+        if (updatedLocationHandlers.size() == 1) {
+            googleApiClient.connect();
+        }
+    }
+
+    public void removeLocationUpdatesListener(UpdatedLocationHandler handler) {
+        updatedLocationHandlers.remove(handler);
+        if (updatedLocationHandlers.isEmpty()) {
+            googleApiClient.disconnect();
+        }
+    }
+
+    protected void updateAllListeners(Location location) {
+        lastUpdatedLocation = location;
+        for (UpdatedLocationHandler handler : updatedLocationHandlers) {
+            handler.handleUpdatedLocation(location);
+        }
     }
 
     private LocationRequest getLocationRequest() {
@@ -61,14 +90,6 @@ public class LocationUtil {
         locationRequest.setSmallestDisplacement(5);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
-    }
-
-    public void apiConnect() {
-        googleApiClient.connect();
-    }
-
-    public void apiDisconnect() {
-        googleApiClient.disconnect();
     }
 
     public interface UpdatedLocationHandler {
