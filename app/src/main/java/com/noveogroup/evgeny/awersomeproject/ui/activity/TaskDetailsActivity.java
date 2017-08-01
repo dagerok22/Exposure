@@ -86,12 +86,9 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     private LatLng currentPosition;
     private LatLng taskPosition;
 
-    public static Intent getIntent(Context context, Task task, Location currentLocation) {
+    public static Intent getIntent(Context context, Task task) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_TASK_ITEM, task);
-//        LatLng currentPos = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        bundle.putDouble(KEY_CURRENT_LOCATION_LAT, currentPos.latitude);
-//        bundle.putDouble(KEY_CURRENT_LOCATION_LNG, currentPos.longitude);
         Intent intent = new Intent(context, TaskDetailsActivity.class);
         intent.putExtras(bundle);
         return intent;

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -28,6 +30,7 @@ import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -39,11 +42,14 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
     private static final int RC_SIGN_IN = 1;
     Context context;
+    @BindView(R.id.get_random_task_button)
+    Button rndTaskButton;
     @BindView(R.id.sign_in_button)
     SignInButton signInButton;
     private GoogleApiClient googleApiClient;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
+    private List<Task> tasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,20 +150,37 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
     @OnClick(R.id.get_random_task_button)
     public void onRandomClick() {
+        rndTaskButton.setEnabled(false);
         RealTimeDBApi.getInstance().getAllTasks(data -> {
+            tasks = data;
             Location currentLocation = LocationUtil.getLastUpdatedLocation();
             if (currentLocation != null) {
-                ArrayList<Task> dataSet = new ArrayList<>();
-                for (Task task : data) {
-                    if ((LocationUtil.getDistance(
-                            new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                            new LatLng(task.getLat(), task.getLng()))) < 10000)
-                        dataSet.add(task);
-                }
-                Task randomTask = dataSet.get(new Random().nextInt(dataSet.size()));
-                // TaskExecutionActivity.newIntent(context,)
+                startRandomTask(currentLocation);
+            }
+            else {
+                LocationUtil.getInstance(this).addLocationUpdatesListener(this);
             }
         });
+    }
+
+    private void startRandomTask(Location currentLocation) {
+        ArrayList<Task> dataSet = new ArrayList<>();
+        for (Task task : tasks) {
+            double dist = LocationUtil.getDistance(
+                    new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                    new LatLng(task.getLat(), task.getLng()));
+            if (dist < 20000)
+                dataSet.add(task);
+        }
+        if (dataSet.size() > 0) {
+            Task randomTask = dataSet.get(new Random().nextInt(dataSet.size()));
+            Intent intent = TaskDetailsActivity.getIntent(this, randomTask);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(this,"Нет заданий расположенных недалеко от вас",Toast.LENGTH_SHORT).show();
+        }
+        rndTaskButton.setEnabled(true);
     }
 
 
@@ -177,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
     @Override
     public void handleUpdatedLocation(Location location) {
-
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
+        startRandomTask(location);
     }
 }

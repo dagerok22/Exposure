@@ -91,7 +91,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
     private void initializeOnRecyclerItemClickListener() {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerViewIncome, position, v) -> {
             TaskListRecyclerViewAdapter adapter = (TaskListRecyclerViewAdapter) recyclerView.getAdapter();
-            Intent intent = TaskDetailsActivity.getIntent(this, adapter.getItems().get(position), currentLocation);
+            Intent intent = TaskDetailsActivity.getIntent(this, adapter.getItems().get(position));
             boolean isAnimationEnabled = getSharedPreferences(getString(R.string.settings_file), MODE_PRIVATE).getBoolean(getString(R.string.task_detail_transition_animation), true);
             ActivityOptionsCompat options = isAnimationEnabled ? initializeTransitionAnimation(position) : null;
             startActivity(intent, options != null ? options.toBundle() : null);
