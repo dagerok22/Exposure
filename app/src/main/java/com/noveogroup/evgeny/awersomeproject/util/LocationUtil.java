@@ -87,7 +87,7 @@ public class LocationUtil {
         LocationRequest locationRequest = new LocationRequest();
 
         locationRequest.setInterval(5000);
-        locationRequest.setSmallestDisplacement(5);
+       // locationRequest.setSmallestDisplacement(5);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
     }

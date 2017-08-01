@@ -22,14 +22,12 @@ import com.noveogroup.evgeny.awersomeproject.helper.ItemClickSupport;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TaskListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 
-import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-//FIXME reorganize methods declarations order
 public class TaskListActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
     public static final String DATASET_KEY = "dataset";
@@ -44,6 +42,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
     List<Task> dataSet;
     private Location currentLocation;
     private FirebaseAuth firebaseAuth;
+    private RealTimeDBApi dbApi;
 
 
     @Override
@@ -51,18 +50,14 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         ButterKnife.bind(this);
-        //dataSet = new ArrayList<>();//FIXME redundant empty lines
-
-
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         //Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
-        //FIXME extract this variable as a class field
-        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
+        dbApi = RealTimeDBApi.getInstance();
         adapter = new TaskListRecyclerViewAdapter();
         initializeRecyclerView();
         initializeOnRecyclerItemClickListener();
-        synchronizeDataAndLocationFetching(dbApi);
+        synchronizeDataAndLocationFetching();
     }
 
     @Override
@@ -71,21 +66,26 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         super.onDestroy();
     }
 
-    //FIXME don't pass the RealTimeDBApi instance as a method parameter. It should be a class field
-    private void synchronizeDataAndLocationFetching(RealTimeDBApi dbApi) {
-        dbApi.getAllTasks(data -> {
-            dataSet = data;
-            adapter.setDataSet(dataSet);
-            if (currentLocation != null) {
-                adapter.setCurrentLocation(currentLocation);
-            }
-            recyclerView.setAdapter(adapter);
-            progressBar.setVisibility(View.GONE);
-        });
-        LocationUtil.getInstance(this)
-                .addLocationUpdatesListener(this);
+    @Override
+    public void handleUpdatedLocation(Location location) {
+        currentLocation = location;
+        if (dataSet != null) {
+            adapter.setCurrentLocation(currentLocation);
+            adapter.notifyDataSetChanged();
+        }
     }
 
+    @OnClick(R.id.fab)
+    void onAddTaskFabClicked() {
+        Intent intent = new Intent(this, AddNewTaskActivity.class);
+        startActivity(intent);
+    }
+
+    private void initializeRecyclerView() {
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setHasFixedSize(true);
+    }
 
 
     private void initializeOnRecyclerItemClickListener() {
@@ -94,7 +94,6 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
             Intent intent = TaskDetailsActivity.getIntent(this, adapter.getItems().get(position), currentLocation);
             boolean isAnimationEnabled = getSharedPreferences(getString(R.string.settings_file), MODE_PRIVATE).getBoolean(getString(R.string.task_detail_transition_animation), true);
             ActivityOptionsCompat options = isAnimationEnabled ? initializeTransitionAnimation(position) : null;
-
             startActivity(intent, options != null ? options.toBundle() : null);
         });
     }
@@ -124,30 +123,20 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
                         distancePair);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(DATASET_KEY, (Serializable) dataSet);
+
+    private void synchronizeDataAndLocationFetching() {
+        dbApi.getAllTasks(data -> {
+            dataSet = data;
+            adapter.setDataSet(dataSet);
+            if (currentLocation != null) {
+                adapter.setCurrentLocation(currentLocation);
+            }
+            recyclerView.setAdapter(adapter);
+            progressBar.setVisibility(View.GONE);
+        });
+        LocationUtil.getInstance(this)
+                .addLocationUpdatesListener(this);
     }
 
-    private void initializeRecyclerView() {
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setHasFixedSize(true);
-    }
 
-    @OnClick(R.id.fab)
-    void onAddTaskFabClicked() {
-        Intent intent = new Intent(this, AddNewTaskActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    public void handleUpdatedLocation(Location location) {
-        currentLocation = location;
-        if (dataSet != null) {
-            adapter.setCurrentLocation(currentLocation);
-            adapter.notifyDataSetChanged();
-        }
-    }
 }
