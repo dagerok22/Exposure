@@ -8,6 +8,8 @@ android {
         applicationId "com.noveogroup.evgeny.awersomeproject"
         minSdkVersion 21
         targetSdkVersion 26
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -22,10 +24,12 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+
 }
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 dependencies {
     def supportLibraryVersion = '26.0.0'
@@ -36,6 +40,13 @@ dependencies {
 
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.maps.android:android-maps-utils:0.5'
+
+    //ui buttons
+    compile 'com.github.medyo:fancybuttons:1.8.4'
+
+    //ui blur
+    compile 'jp.wasabeef:glide-transformations:2.0.2'
+
 
     //logging
     compile 'org.slf4j:slf4j-api:1.7.21'

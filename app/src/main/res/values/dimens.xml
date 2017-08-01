@@ -2,13 +2,26 @@
 <resources>
     <dimen name="task_item_tag_size">17sp</dimen>
     <dimen name="task_item_author_size">15sp</dimen>
+    <dimen name="task_item_distance_size">15sp</dimen>
     <dimen name="task_item_title_size">30sp</dimen>
+    <dimen name="task_item_rating_size">15sp</dimen>
+    <dimen name="task_item_age_size">15sp</dimen>
     <dimen name="task_item_title_margin_left">8dp</dimen>
     <dimen name="task_item_title_margin_bottom">8dp</dimen>
     <dimen name="task_item_top_height">140dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="task_item_bottom_padding">8dp</dimen>
     <dimen name="task_item_margin">8dp</dimen>
-    <dimen name="tag_text_size">32sp</dimen>
+    <dimen name="tag_text_size">20sp</dimen>
     <dimen name="tags_cards_tite_text_size">36sp</dimen>
+    <dimen name="button_border_width">1dp</dimen>
+    <dimen name="button_layout_margin_main_screen">20dp</dimen>
+    <dimen name="button_padding_bottom">10dp</dimen>
+    <dimen name="button_padding_left">20dp</dimen>
+    <dimen name="button_padding_right">20dp</dimen>
+    <dimen name="button_padding_top">10dp</dimen>
+    <dimen name="task_item_details_bottom_section_padding">8dp</dimen>
+    <dimen name="default_button_width">150dp</dimen>
+    <dimen name="add_task_activity_rules_size">17dp</dimen>
+    <dimen name="add_new_task_name_title_size">22sp</dimen>
 </resources>

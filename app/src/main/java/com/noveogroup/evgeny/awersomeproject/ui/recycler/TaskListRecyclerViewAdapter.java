@@ -1,6 +1,13 @@
 package com.noveogroup.evgeny.awersomeproject.ui.recycler;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,18 +16,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.model.LatLng;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
+import com.noveogroup.evgeny.awersomeproject.util.GlideLogger;
+import com.noveogroup.evgeny.awersomeproject.util.ImageBlurUtil;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
 import java.util.List;
 import java.util.Locale;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
 
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.ViewHolder> {
+    private final Context context;
     private Location currentLocation;
     private List<Task> dataSet;
 
@@ -32,6 +50,10 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         this.dataSet = dataSet;
     }
 
+    public TaskListRecyclerViewAdapter(Context applicationContext) {
+        context = applicationContext;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_list_item_view, parent, false);
@@ -41,7 +63,6 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = dataSet.get(position);
-
         holder.title.setText(task.getName());
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));
@@ -56,11 +77,10 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             holder.distance.setText(R.string.find_user_coords);
         }
 
-        Glide.with(holder.title.getContext())
+        Glide.with(context)
                 .load(task.getImageUrl())
-                .centerCrop()
+                .bitmapTransform(new CenterCrop(holder.title.getContext()),new BlurTransformation(holder.title.getContext(), 60))
                 .into(holder.imageView);
-
     }
 
     public List<Task> getItems() {
@@ -90,6 +110,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         TextView author;
         TextView age;
         TextView distance;
+        ContentFrameLayout topSectionContainer;
 
         ViewHolder(View v) {
             super(v);
@@ -100,6 +121,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             age = v.findViewById(R.id.age);
             rating = v.findViewById(R.id.rating);
             distance = v.findViewById(R.id.distance);
+            topSectionContainer = v.findViewById(R.id.top_section_container);
         }
     }
 }
