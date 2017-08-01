@@ -56,7 +56,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        //Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         //FIXME extract this variable as a class field
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
         adapter = new TaskListRecyclerViewAdapter();

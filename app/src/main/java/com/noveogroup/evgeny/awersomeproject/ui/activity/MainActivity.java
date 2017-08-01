@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         return progressDialog;
     }
 
-    @OnClick(R.id.button)
+    @OnClick(R.id.goToListButton)
     public void onButtonClick() {
         Intent intent = new Intent(this, TaskListActivity.class);
         startActivity(intent);

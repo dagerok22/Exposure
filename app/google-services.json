@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "117598585189-cqeu7uuovni74lq1r2c5t9mvga476oiq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noveogroup.evgeny.awersomeproject",
+            "certificate_hash": "da096c8fc4daeab6e127ee322162646f881e5b0d"
+          }
+        },
+        {
+          "client_id": "117598585189-honv9ja663on3ggodbs5rkckgrk32jh5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noveogroup.evgeny.awersomeproject",
+            "certificate_hash": "e2ace1b478ba5a6e8015f87118fc4aed1a8a2b59"
+          }
+        },
+        {
           "client_id": "117598585189-aq3p0vgd6fhsta0u7a294no4jmq7smcu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

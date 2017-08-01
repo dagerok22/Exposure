@@ -176,7 +176,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         userMarker.setPosition(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()));
     }
 
-    @OnClick(R.id.TMP_BTN)
+    @OnClick(R.id.fab)
     void onTMPClick() {
         dispatchTakePictureIntent();
     }

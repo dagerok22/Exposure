@@ -2,6 +2,8 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:translationZ="2dp"
     android:layout_margin="@dimen/task_item_margin">
 
     <android.support.v7.widget.LinearLayoutCompat
@@ -10,11 +12,13 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.ContentFrameLayout
+            android:id="@+id/top_section_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/task_item_top_height">
 
             <ImageView
                 android:id="@+id/image"
+                android:visibility="invisible"
                 android:transitionName="image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -32,7 +36,7 @@
                 android:transitionName="title" />
         </android.support.v7.widget.ContentFrameLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/task_item_bottom_section_color"
@@ -47,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/task_item_tag_color"
                 android:textSize="@dimen/task_item_tag_size"
+                android:text="adsad"
                 android:transitionName="tags" />
 
             <TextView
@@ -55,7 +60,9 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="textStart"
                 android:textColor="@color/task_item_author_color"
+                android:layout_below="@+id/tags"
                 android:textSize="@dimen/task_item_author_size"
+                android:text="adsad"
                 android:transitionName="author" />
 
             <TextView
@@ -65,7 +72,10 @@
                 android:textAlignment="textStart"
                 android:textColor="@color/task_item_author_color"
                 android:textSize="@dimen/task_item_author_size"
-                android:transitionName="rating" />
+                android:text="adsad"
+                android:transitionName="rating"
+                android:layout_below="@+id/tags"
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:id="@+id/age"
@@ -74,7 +84,10 @@
                 android:textAlignment="textEnd"
                 android:textColor="@color/task_item_age_color"
                 android:textSize="@dimen/task_item_author_size"
-                android:transitionName="age" />
+                android:text="adsad"
+                android:transitionName="age"
+                android:layout_below="@+id/rating"
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:id="@+id/distance"
@@ -83,9 +96,12 @@
                 android:textAlignment="textEnd"
                 android:textColor="@color/task_item_age_color"
                 android:textSize="@dimen/task_item_author_size"
-                android:transitionName="distance" />
+                android:text="adsad"
+                android:transitionName="distance"
+                android:layout_below="@+id/age"
+                android:layout_alignParentEnd="true" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </android.support.v7.widget.LinearLayoutCompat>
 
 </android.support.v7.widget.CardView>
