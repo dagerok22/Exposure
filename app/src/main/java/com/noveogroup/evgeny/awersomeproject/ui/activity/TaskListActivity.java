@@ -30,8 +30,6 @@ import butterknife.OnClick;
 
 public class TaskListActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
-    public static final String DATASET_KEY = "dataset";
-
     @BindView(R.id.fab)
     FloatingActionButton fab;
     @BindView(R.id.task_list_recycler_view)

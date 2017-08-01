@@ -23,10 +23,10 @@ public class LocationUtil {
     static private Location lastUpdatedLocation;
     static private LocationUtil locationUtil;
     private final GoogleApiClient googleApiClient;
-    private Set<UpdatedLocationHandler> updatedLocationHandlers;
+    private ArrayList<UpdatedLocationHandler> updatedLocationHandlers;
 
     private LocationUtil(Context context) {
-        updatedLocationHandlers = new HashSet<>();
+        updatedLocationHandlers = new ArrayList<>();
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -80,8 +80,8 @@ public class LocationUtil {
 
     protected void updateAllListeners(Location location) {
         lastUpdatedLocation = location;
-        for (UpdatedLocationHandler handler : updatedLocationHandlers) {
-            handler.handleUpdatedLocation(location);
+        for (int i =0;i<updatedLocationHandlers.size();i++ ) {
+            updatedLocationHandlers.get(i).handleUpdatedLocation(location);
         }
     }
 
