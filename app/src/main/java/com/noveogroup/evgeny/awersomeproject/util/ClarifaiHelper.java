@@ -1,5 +1,6 @@
 package com.noveogroup.evgeny.awersomeproject.util;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.File;
@@ -18,8 +19,15 @@ import clarifai2.dto.prediction.Concept;
 public class ClarifaiHelper {
 
     private static ClarifaiClient client;
+    PostExecuteListener postExecuteListener;
+    String photoPath;
 
-    public static List<Concept> getTagList(String currentPhotoPath) {
+    public ClarifaiHelper(String photoPath, PostExecuteListener postExecuteListener) {
+        this.photoPath = photoPath;
+        this.postExecuteListener = postExecuteListener;
+    }
+
+    private List<Concept> getTagList(String currentPhotoPath) {
         Log.d("ClarifaiHelper", "request start");
         if (client == null) {
             client = new ClarifaiBuilder("f7bcefcc6cbf45219549bc97714c8604").buildSync();
@@ -36,4 +44,27 @@ public class ClarifaiHelper {
         Log.d("ClarifaiHelper", "request success");
         return tags;
     }
+
+
+    public void startAsyncTask() {
+        AsyncTask<Void, Void, List<Concept>> asyncTask = new AsyncTask<Void, Void, List<Concept>>() {
+            @Override
+            protected List<Concept> doInBackground(Void... params) {
+                PhotoHelper.compressPhotoFile(photoPath, 25);
+                return getTagList(photoPath);
+            }
+
+            @Override
+            protected void onPostExecute(List<Concept> clarifaiOutputs) {
+                postExecuteListener.onAnswerGet(clarifaiOutputs);
+            }
+        };
+        asyncTask.execute((Void[]) null);
+    }
+
+    public interface PostExecuteListener {
+        void onAnswerGet(List<Concept> clarifaiOutputs);
+    }
+
 }
+

@@ -56,8 +56,8 @@ public class RealTimeDBApi {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     tasksData.add(child.getValue(Task.class));
-                    callback.onDataReceived(tasksData);
                 }
+                callback.onDataReceived(tasksData);
             }
 
             @Override

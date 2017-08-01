@@ -1,6 +1,5 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -17,10 +16,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
+import com.noveogroup.evgeny.awersomeproject.util.PhotoHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,10 +33,9 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
     public static final String NEW_TASK_NAME = "NEW_TASK_NAME";
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_CHOOSE_TAGS = 2;
-    //FIXME Why package-private?
-    String currentPhotoPath;
-    ArrayList<String> tags;
-    String taskName;
+    private String currentPhotoPath;
+    private ArrayList<String> tags;
+    private String taskName;
     private LocationRequest locationRequest;
     private GoogleApiClient googleApiClient;
     private LocationUtil locationUtil;
@@ -57,17 +55,15 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = PhotoHelper.createImageFile(this);
+                currentPhotoPath = photoFile.getAbsolutePath();
             } catch (IOException ex) {
                 //FIXME use logback
                 Log.d("SCREEN3", "File create err: ", ex);
             }
-            // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this, "com.noveogroup.evgeny.fileprovider",
                         photoFile);
@@ -87,23 +83,6 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
             taskName = data.getStringExtra(NEW_TASK_NAME);
             LocationUtil.getInstance(this).addLocationUpdatesListener(this);
         }
-    }
-
-    //FIXME !!! CODE DUPLICATION. The same as in the TaskDetailsActivity
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        @SuppressLint("SimpleDateFormat")
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = this.getFilesDir();
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
     @Override

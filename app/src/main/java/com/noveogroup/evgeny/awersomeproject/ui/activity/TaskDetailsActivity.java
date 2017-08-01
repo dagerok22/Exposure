@@ -29,6 +29,7 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
+import com.noveogroup.evgeny.awersomeproject.util.PhotoHelper;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
 import org.slf4j.Logger;
@@ -85,12 +86,9 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     private LatLng currentPosition;
     private LatLng taskPosition;
 
-    public static Intent getIntent(Context context, Task task, Location currentLocation) {
+    public static Intent getIntent(Context context, Task task) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_TASK_ITEM, task);
-//        LatLng currentPos = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        bundle.putDouble(KEY_CURRENT_LOCATION_LAT, currentPos.latitude);
-//        bundle.putDouble(KEY_CURRENT_LOCATION_LNG, currentPos.longitude);
         Intent intent = new Intent(context, TaskDetailsActivity.class);
         intent.putExtras(bundle);
         return intent;
@@ -186,7 +184,8 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = PhotoHelper.createImageFile(this);
+                currentPhotoPath = photoFile.getAbsolutePath();
             } catch (IOException ex) {
                 Log.d("TaskDetailsActivity", "File create err: ", ex);
             }
@@ -206,24 +205,6 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
             startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<>(currentTask.getTags())));
         }
     }
-
-    //FIXME extract into a separate class. Into utils class for example
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        @SuppressLint("SimpleDateFormat")
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = this.getFilesDir();
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
     @Override
     public void handleUpdatedLocation(Location location) {
         if (userMarker != null) {
