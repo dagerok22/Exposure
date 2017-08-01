@@ -36,6 +36,7 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import mehdi.sakout.fancybuttons.FancyButton;
 
 public class MainActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     private static final int RC_SIGN_IN = 1;
     Context context;
     @BindView(R.id.get_random_task_button)
-    Button rndTaskButton;
+    FancyButton rndTaskButton;
     @BindView(R.id.sign_in_button)
     SignInButton signInButton;
     private GoogleApiClient googleApiClient;
