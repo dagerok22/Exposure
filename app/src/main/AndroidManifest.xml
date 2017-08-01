@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.AddNewTaskActivity"
+            android:name=".ui.activity.NewTaskActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.TaskListActivity"

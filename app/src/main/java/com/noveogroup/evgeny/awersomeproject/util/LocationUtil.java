@@ -15,16 +15,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class LocationUtil {
     static private Location lastUpdatedLocation;
     static private LocationUtil locationUtil;
     private final GoogleApiClient googleApiClient;
-    private ArrayList<UpdatedLocationHandler> updatedLocationHandlers;
+    private Set<UpdatedLocationHandler> updatedLocationHandlers;
 
     private LocationUtil(Context context) {
-        updatedLocationHandlers = new ArrayList<>();
+        updatedLocationHandlers = new HashSet<>();
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {

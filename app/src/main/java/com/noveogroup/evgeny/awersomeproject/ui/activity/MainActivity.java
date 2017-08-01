@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
     @OnClick(R.id.on_screen3_button)
     public void onScreen3() {
-        Intent intent = new Intent(MainActivity.this, AddNewTaskActivity.class);
+        Intent intent = new Intent(MainActivity.this, NewTaskActivity.class);
         startActivity(intent);
     }
 

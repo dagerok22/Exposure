@@ -40,12 +40,8 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     public ImageView imageView;
     @BindView(R.id.task_name)
     TextView taskNameView;
-    @BindView(R.id.photo_tag_recycler_view)
-    RecyclerView photoRecyclerView;
     @BindView(R.id.task_tag_recycler_view)
     RecyclerView taskRecyclerView;
-    @BindView(R.id.tag_progress_bar)
-    ProgressBar progressBar1;
     @BindView(R.id.miss_tag_progress_bar)
     ProgressBar progressBar2;
     @BindView(R.id.toolbar)
@@ -53,7 +49,6 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
 
     private List<String> predictionResults;
     private ArrayList<String> taskTags;
-    private TagListRecyclerViewAdapter photoTagsAdapter;
     private TagListRecyclerViewAdapter taskTagsAdapter;
 
     public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
@@ -71,6 +66,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         taskNameView.setText(getIntent().getStringExtra(TASK_NAME));
+        taskTags = getIntent().getStringArrayListExtra(TAGS);
         taskTags = getIntent().getStringArrayListExtra(TAGS);
         String photoPath = getIntent().getStringExtra(PHOTO_PATH);
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
@@ -96,22 +92,17 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     }
 
     private void recyclerViewSetup() {
-        photoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        photoTagsAdapter = new TagListRecyclerViewAdapter(predictionResults, null, this);
-        photoTagsAdapter.setChooseColor(Color.GREEN);
-        photoRecyclerView.setAdapter(photoTagsAdapter);
-
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskTagsAdapter = new TagListRecyclerViewAdapter(taskTags, null, this);
-        taskTagsAdapter.setChooseColor(Color.RED);
-        taskTagsAdapter.setNotChooseColor(Color.GREEN);
+        taskTagsAdapter.setChooseColor(getColor(R.color.not_identical_tag_color));
+        taskTagsAdapter.setNotChooseColor(getColor(R.color.identical_tag_color));
         taskRecyclerView.setAdapter(taskTagsAdapter);
     }
 
     private void sortTags() {
         for (String tag : taskTags) {
             if (predictionResults.contains(tag)) {
-                photoTagsAdapter.setTagChosenState(tag, true);
+                //photoTagsAdapter.setTagChosenState(tag, true);
             } else {
                 taskTagsAdapter.setTagChosenState(tag, true);
             }
@@ -126,7 +117,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         }
         recyclerViewSetup();
         sortTags();
-        progressBar1.setVisibility(View.GONE);
+       // progressBar1.setVisibility(View.GONE);
         progressBar2.setVisibility(View.GONE);
     }
 }

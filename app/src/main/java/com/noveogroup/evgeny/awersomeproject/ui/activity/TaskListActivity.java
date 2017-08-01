@@ -77,7 +77,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
 
     @OnClick(R.id.fab)
     void onAddTaskFabClicked() {
-        Intent intent = new Intent(this, AddNewTaskActivity.class);
+        Intent intent = new Intent(this, NewTaskActivity.class);
         startActivity(intent);
     }
 

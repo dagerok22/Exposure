@@ -76,8 +76,8 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
         if (!chosenTags.isEmpty()) {
             if (!TextUtils.isEmpty(taskNameEditText.getText())) {
                 Intent answerIntent = new Intent();
-                answerIntent.putStringArrayListExtra(AddNewTaskActivity.TAGS_ARRAY, chosenTags);
-                answerIntent.putExtra(AddNewTaskActivity.NEW_TASK_NAME, taskNameEditText.getText().toString());
+                answerIntent.putStringArrayListExtra(NewTaskActivity.TAGS_ARRAY, chosenTags);
+                answerIntent.putExtra(NewTaskActivity.NEW_TASK_NAME, taskNameEditText.getText().toString());
                 setResult(RESULT_OK, answerIntent);
                 finish();
             } else {

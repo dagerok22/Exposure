@@ -26,7 +26,7 @@ import java.util.Date;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddNewTaskActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
+public class NewTaskActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
 
     public static final String TAGS_ARRAY = "TAGS_ARRAY";
