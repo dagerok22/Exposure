@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
+import com.noveogroup.evgeny.awersomeproject.util.GlideLogger;
 import com.noveogroup.evgeny.awersomeproject.util.ImageBlurUtil;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
@@ -33,9 +34,11 @@ import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 import java.util.List;
 import java.util.Locale;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.ViewHolder> {
+    private final Context context;
     private Location currentLocation;
     private List<Task> dataSet;
 
@@ -47,8 +50,8 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         this.dataSet = dataSet;
     }
 
-    public TaskListRecyclerViewAdapter() {
-
+    public TaskListRecyclerViewAdapter(Context applicationContext) {
+        context = applicationContext;
     }
 
     @Override
@@ -74,10 +77,9 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             holder.distance.setText(R.string.find_user_coords);
         }
 
-        Glide.with(holder.title.getContext())
+        Glide.with(context)
                 .load(task.getImageUrl())
-                .centerCrop()
-//                .bitmapTransform(new CenterCrop(holder.title.getContext()),new BlurTransformation(holder.title.getContext()))
+                .bitmapTransform(new CenterCrop(holder.title.getContext()),new BlurTransformation(holder.title.getContext(), 60))
                 .into(holder.imageView);
     }
 

@@ -59,7 +59,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
 //        Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         //FIXME extract this variable as a class field
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
-        adapter = new TaskListRecyclerViewAdapter();
+        adapter = new TaskListRecyclerViewAdapter(getApplicationContext());
         initializeRecyclerView();
         initializeOnRecyclerItemClickListener();
         synchronizeDataAndLocationFetching(dbApi);

@@ -14,7 +14,7 @@
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/goToListButton"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/default_button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/button_layout_margin_main_screen"
@@ -32,7 +32,7 @@
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/on_screen3_button"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/default_button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/button_layout_margin_main_screen"
@@ -50,7 +50,7 @@
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/get_random_task_button"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/default_button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/button_layout_margin_main_screen"

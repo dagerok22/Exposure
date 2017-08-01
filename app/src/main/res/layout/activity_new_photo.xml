@@ -9,10 +9,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/toolbar"
-        android:elevation="4dp"
+        android:background="@color/colorPrimary"
+        android:elevation="1dp"
+        app:titleTextColor="#FFF"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <!--<include layout="@layout/toolbar_layout"        />-->
 
@@ -30,9 +31,9 @@
                 android:id="@+id/task_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter task name"
+                android:hint="@string/enter_task_name_hint"
                 android:inputType="textCapSentences"
-                android:textSize="36sp" />
+                android:textSize="@dimen/add_new_task_name_title_size" />
 
             <ImageView
                 android:id="@+id/photo_view"

@@ -49,7 +49,7 @@ public class AddNewTaskActivity extends AppCompatActivity implements LocationUti
         ButterKnife.bind(this);
     }
 
-    @OnClick(R.id.button2)
+    @OnClick(R.id.make_new_task)
     public void onCameraOpenClick() {
         dispatchTakePictureIntent();
     }

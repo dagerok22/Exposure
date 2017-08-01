@@ -45,6 +45,7 @@ dependencies {
     compile 'com.github.medyo:fancybuttons:1.8.4'
 
     //ui blur
+    compile 'jp.wasabeef:glide-transformations:2.0.2'
 
 
     //logging
