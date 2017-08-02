@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto">
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="vertical">
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/goToListButton"
@@ -19,8 +18,8 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/button_layout_margin_main_screen"
             android:paddingBottom="@dimen/button_padding_bottom"
-            android:paddingStart="@dimen/button_padding_left"
             android:paddingEnd="@dimen/button_padding_right"
+            android:paddingStart="@dimen/button_padding_left"
             android:paddingTop="@dimen/button_padding_top"
             fancy:fb_borderColor="@color/colorPrimary"
             fancy:fb_borderWidth="@dimen/button_border_width"
@@ -37,8 +36,8 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/button_layout_margin_main_screen"
             android:paddingBottom="@dimen/button_padding_bottom"
-            android:paddingStart="@dimen/button_padding_left"
             android:paddingEnd="@dimen/button_padding_right"
+            android:paddingStart="@dimen/button_padding_left"
             android:paddingTop="@dimen/button_padding_top"
             app:fb_text="@string/new_task_button"
             fancy:fb_borderColor="@color/colorPrimary"
@@ -55,8 +54,8 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/button_layout_margin_main_screen"
             android:paddingBottom="@dimen/button_padding_bottom"
-            android:paddingStart="@dimen/button_padding_left"
             android:paddingEnd="@dimen/button_padding_right"
+            android:paddingStart="@dimen/button_padding_left"
             android:paddingTop="@dimen/button_padding_top"
             fancy:fb_borderColor="@color/colorPrimary"
             fancy:fb_borderWidth="@dimen/button_border_width"
@@ -66,12 +65,23 @@
             fancy:fb_text="@string/get_random_task"
             fancy:fb_textColor="@color/colorPrimary" />
 
-        <com.google.android.gms.common.SignInButton
+        <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/sign_in_button"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/default_log_in_button_width"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/button_layout_margin_main_screen"
+            android:paddingBottom="@dimen/button_padding_bottom"
+            android:paddingEnd="@dimen/button_padding_right"
+            android:paddingStart="@dimen/button_padding_left"
+            android:paddingTop="@dimen/button_padding_top"
+            fancy:fb_borderColor="@color/colorAccent"
+            fancy:fb_borderWidth="@dimen/button_border_width"
+            fancy:fb_defaultColor="@color/defaultButtonBackgroundColor"
+            fancy:fb_focusColor="@color/colorAccent"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="@string/log_in_button_text"
+            fancy:fb_textColor="@color/colorAccent" />
 
     </LinearLayout>
 </FrameLayout>

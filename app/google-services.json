@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "117598585189-cqeu7uuovni74lq1r2c5t9mvga476oiq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.noveogroup.evgeny.awersomeproject",
-            "certificate_hash": "da096c8fc4daeab6e127ee322162646f881e5b0d"
-          }
-        },
-        {
           "client_id": "117598585189-honv9ja663on3ggodbs5rkckgrk32jh5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
