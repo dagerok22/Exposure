@@ -196,7 +196,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             //TODO переделай тэги
-            startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<>(currentTask.getTags())));
+            startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<>(currentTask.getTags()), currentTask.getTaskId()));
         }
     }
     @Override

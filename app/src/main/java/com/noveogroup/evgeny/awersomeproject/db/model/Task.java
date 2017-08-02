@@ -6,16 +6,34 @@ import java.util.List;
 public class Task implements Serializable {
 
     private String name;
+    private List<String> usersWhoDone;
     private List<String> tags;
     private String imageUrl;
     private double lat;
     private double lng;
     private float rating;
     private String authorName;
-    private String authorId;
+    private String taskId;
+    private String  authorId;
     private String date;
 
     public Task() {
+    }
+
+    public List<String> getUsersWhoDone() {
+        return usersWhoDone;
+    }
+
+    public void setUsersWhoDone(List<String> usersWhoDone) {
+        this.usersWhoDone = usersWhoDone;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public String getName() {

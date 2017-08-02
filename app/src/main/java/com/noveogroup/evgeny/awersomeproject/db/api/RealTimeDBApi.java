@@ -87,6 +87,7 @@ public class RealTimeDBApi {
         newTask.setName(name);
 
         DatabaseReference newTaskRef = tasksRef.push();
+        newTask.setTaskId(newTaskRef.getKey());
         newTaskRef.setValue(newTask);
     }
 
@@ -111,7 +112,21 @@ public class RealTimeDBApi {
         usersRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    callBack.onDataReceived(dataSnapshot.getValue(User.class));
+                callBack.onDataReceived(dataSnapshot.getValue(User.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void getTaskById(String id, OnTaskByIdResultCallBack callBack) {
+        tasksRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Task value = dataSnapshot.getValue(Task.class);
+                callBack.onDataReceived(value);
             }
 
             @Override
@@ -135,7 +150,11 @@ public class RealTimeDBApi {
         newUserRef.child("name").setValue(name);
     }
 
-    public void addRatingToUser(String id, float ratingToAdd){
+    public void updateTask(Task task) {
+        tasksRef.child(task.getTaskId()).setValue(task);
+    }
+
+    public void addRatingToUser(String id, float ratingToAdd) {
         usersRef.child(id).child("rating").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -175,8 +194,13 @@ public class RealTimeDBApi {
     public interface OnUserResultCallBack {
         void onDataReceived(List<User> data);
     }
+
     public interface OnUserByIdResultCallBack {
         void onDataReceived(User data);
+    }
+
+    public interface OnTaskByIdResultCallBack {
+        void onDataReceived(Task data);
     }
 
     public interface HandleImageUriCallback {

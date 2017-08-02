@@ -41,6 +41,8 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     public static final String TASK_NAME = "task_name";
     public static final String TAGS = "tags";
 
+    static final private String LOG_TAG = "TaskExecutionActivity";
+    private static final String TASK_ID = "TASK_ID";
     @BindView(R.id.photo_view)
     public ImageView imageView;
     @BindView(R.id.task_name)
@@ -58,12 +60,14 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     private TagListRecyclerViewAdapter taskTagsAdapter;
     private RealTimeDBApi dbApi;
     private FirebaseUser currentUser;
+    private String taskId;
 
 
-    public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
+    public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags, String taskId) {
         Intent intent = new Intent(context, TaskExecutionActivity.class);
         intent.putExtra(PHOTO_PATH, photoPath);
         intent.putExtra(TASK_NAME, taskName);
+        intent.putExtra(TASK_ID, taskId);
         intent.putStringArrayListExtra(TAGS, tags);
         return intent;
     }
@@ -78,6 +82,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         taskNameView.setText(getIntent().getStringExtra(TASK_NAME));
         taskTags = getIntent().getStringArrayListExtra(TAGS);
+        taskId = getIntent().getStringExtra(TASK_ID);
         taskTags = getIntent().getStringArrayListExtra(TAGS);
         String photoPath = getIntent().getStringExtra(PHOTO_PATH);
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
@@ -96,21 +101,29 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_done:
-                Toast.makeText(this, "galka", Toast.LENGTH_SHORT).show();
                 if (photoTagStatus == PhotoTagStatus.SUCCESS) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Важное сообщение!")
-                            .setMessage("Поздравляем вы выполнили задание")
+                    builder
+                            .setMessage("Поздравляем вы выполнили задание: +" + taskTags.size() + " очка")
                             .setCancelable(false)
                             .setNegativeButton("ОК",
                                     (dialog, id) -> {
                                         dialog.cancel();
+                                        startActivity(new Intent(this, TaskListActivity.class));
+                                        finish();
                                     });
                     AlertDialog alert = builder.create();
                     alert.show();
                     dbApi.addRatingToUser(currentUser.getUid(), taskTags.size());
-                    startActivity(new Intent(this, TaskListActivity.class));
-                    finish();
+                    dbApi.getTaskById(taskId, data -> {
+                        List<String> usersWhoDone = data.getUsersWhoDone();
+                        if (usersWhoDone == null){
+                            usersWhoDone = new ArrayList<>();
+                        }
+                        usersWhoDone.add(TaskExecutionActivity.this.currentUser.getUid());
+                        TaskExecutionActivity.this.dbApi.updateTask(data);
+                    });
+
                 } else if (photoTagStatus == PhotoTagStatus.FAILURE) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Важное сообщение!")
