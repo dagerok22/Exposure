@@ -19,7 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
+import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.ClarifaiHelper;
 
@@ -53,6 +56,8 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     private List<String> predictionResults;
     private ArrayList<String> taskTags;
     private TagListRecyclerViewAdapter taskTagsAdapter;
+    private RealTimeDBApi dbApi;
+    private FirebaseUser currentUser;
 
 
     public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
@@ -69,6 +74,8 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         setContentView(R.layout.activity_task_execution);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        dbApi = RealTimeDBApi.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         taskNameView.setText(getIntent().getStringExtra(TASK_NAME));
         taskTags = getIntent().getStringArrayListExtra(TAGS);
         taskTags = getIntent().getStringArrayListExtra(TAGS);
@@ -101,6 +108,9 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
                                     });
                     AlertDialog alert = builder.create();
                     alert.show();
+                    dbApi.addRatingToUser(currentUser.getUid(), taskTags.size());
+                    startActivity(new Intent(this, TaskListActivity.class));
+                    finish();
                 } else if (photoTagStatus == PhotoTagStatus.FAILURE) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Важное сообщение!")

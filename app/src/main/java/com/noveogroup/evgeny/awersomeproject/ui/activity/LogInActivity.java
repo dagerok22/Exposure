@@ -96,7 +96,7 @@ public class LogInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             user = auth.getCurrentUser();
-                            dbApi.writeUser(user.getUid(), name.getText().toString(), 0f, new Date());
+                            dbApi.writeUser(user.getUid(), name.getText().toString(), 0, new Date());
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -136,7 +136,6 @@ public class LogInActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         if (user != null){
             Intent intent = new Intent(this, MainActivity.class);
-            dbApi.writeUser(user.getUid(), name.getText().toString(), 0f, new Date());
             startActivity(intent);
             finish();
         }

@@ -4,7 +4,7 @@ public class User {
 
     private String name;
     private String id;
-    private float rating;
+    private Integer rating;
     private String dateOfRegistration;
 
     public User() {
@@ -26,11 +26,11 @@ public class User {
         this.name = name;
     }
 
-    public float getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(float rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 

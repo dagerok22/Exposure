@@ -122,7 +122,7 @@ public class RealTimeDBApi {
 
     public void writeUser(String id,
                           String name,
-                          float rating,
+                          int rating,
                           Date dateOfReg) {
         User newUser = new User();
         newUser.setName(name);
@@ -132,8 +132,21 @@ public class RealTimeDBApi {
 
         DatabaseReference newUserRef = usersRef.child(id);
         newUserRef.setValue(newUser);
+        newUserRef.child("name").setValue(name);
+    }
 
+    public void addRatingToUser(String id, float ratingToAdd){
+        usersRef.child(id).child("rating").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                usersRef.child(id).child("rating").setValue(dataSnapshot.getValue(Integer.class) + ratingToAdd);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void writeImageAndGetUrl(File image, HandleImageFileCallback handleUri) {
