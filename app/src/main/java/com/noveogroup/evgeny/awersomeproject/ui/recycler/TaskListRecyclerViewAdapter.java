@@ -68,9 +68,6 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = dataSet.get(position);
-        if (task.getUsersWhoDone().contains(currentUserUid)){
-            return;
-        }
         holder.title.setText(task.getName());
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));

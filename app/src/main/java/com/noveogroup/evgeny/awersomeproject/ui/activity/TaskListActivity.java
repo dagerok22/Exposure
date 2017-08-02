@@ -22,6 +22,7 @@ import com.noveogroup.evgeny.awersomeproject.helper.ItemClickSupport;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TaskListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -131,14 +132,24 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
 
     private void synchronizeData() {
         dbApi.getAllTasks(data -> {
-            dataSet = data;
+            String currentUserUid = currentUser.getUid();
+            List<String> usersWhoDone;
+            dataSet = new ArrayList<>();
+            for (Task task : data) {
+                usersWhoDone = task.getUsersWhoDone();
+                if (usersWhoDone == null) {
+                    dataSet.add(task);
+                } else if (usersWhoDone != null && !usersWhoDone.contains(currentUserUid)) {
+                    dataSet.add(task);
+                }
+            }
             adapter.setDataSet(dataSet);
             if (currentLocation != null) {
                 adapter.setCurrentLocation(currentLocation);
             }
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
-        });       
+        });
     }
 
 
