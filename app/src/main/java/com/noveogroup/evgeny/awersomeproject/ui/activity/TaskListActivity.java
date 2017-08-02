@@ -59,18 +59,25 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
     }
 
     @Override
-    protected void onDestroy() {
-        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
-        super.onDestroy();
+    protected void onStart() {
+        super.onStart();
+        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
     }
 
     @Override
-    public void handleUpdatedLocation(Location location) {
+    protected void onStop() {
+        super.onStop();
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
+    }
+
+    @Override
+    public boolean handleUpdatedLocation(Location location) {
         currentLocation = location;
         if (dataSet != null) {
             adapter.setCurrentLocation(currentLocation);
             adapter.notifyDataSetChanged();
         }
+        return false;
     }
 
     @OnClick(R.id.fab)
@@ -120,7 +127,6 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
                         agePair,
                         distancePair);
     }
-
 
     private void synchronizeDataAndLocationFetching() {
         dbApi.getAllTasks(data -> {

@@ -10,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
@@ -36,15 +34,25 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
     private String currentPhotoPath;
     private ArrayList<String> tags;
     private String taskName;
-    private LocationRequest locationRequest;
-    private GoogleApiClient googleApiClient;
-    private LocationUtil locationUtil;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_task);
         ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
     }
 
     @OnClick(R.id.make_new_task)
@@ -81,13 +89,24 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
         if (requestCode == REQUEST_CHOOSE_TAGS && resultCode == RESULT_OK) {
             tags = data.getStringArrayListExtra(TAGS_ARRAY);
             taskName = data.getStringExtra(NEW_TASK_NAME);
-            LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+            Location location = LocationUtil.getLastUpdatedLocation();
+            if (location != null) {
+                addTaskToDatabase(location);
+            }
+            else {
+                Toast.makeText(this,"Мы не можем определить ваше местоположение. Задание не будет добавленно."
+                        ,Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     @Override
-    public void handleUpdatedLocation(Location location) {
-        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
+    public boolean handleUpdatedLocation(Location location) {
+        //addTaskToDatabase(location);
+        return false;
+    }
+
+    private void addTaskToDatabase(final Location location) {
         float rating = 0;
         String authorName = "Evgen";
         int authorId = 5;

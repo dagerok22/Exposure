@@ -2,9 +2,11 @@ package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -46,10 +48,12 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     ProgressBar progressBar2;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    private PhotoTagStatus photoTagStatus;
 
     private List<String> predictionResults;
     private ArrayList<String> taskTags;
     private TagListRecyclerViewAdapter taskTagsAdapter;
+
 
     public static Intent newIntent(Context context, String photoPath, String taskName, ArrayList<String> tags) {
         Intent intent = new Intent(context, TaskExecutionActivity.class);
@@ -72,6 +76,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
         clarifaiHelper.startAsyncTask();
         Glide.with(this).load(new File(photoPath)).into(imageView);
+        photoTagStatus = PhotoTagStatus.NOT_STARTED;
     }
 
     @Override
@@ -85,6 +90,29 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         switch (item.getItemId()) {
             case R.id.action_done:
                 Toast.makeText(this, "galka", Toast.LENGTH_SHORT).show();
+                if (photoTagStatus == PhotoTagStatus.SUCCESS) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Важное сообщение!")
+                            .setMessage("Поздравляем вы выполнили задание")
+                            .setCancelable(false)
+                            .setNegativeButton("ОК",
+                                    (dialog, id) -> {
+                                        dialog.cancel();
+                                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                } else if (photoTagStatus == PhotoTagStatus.FAILURE) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Важное сообщение!")
+                            .setMessage("Вы не справиль с заданием. Теперь вы умрете")
+                            .setCancelable(false)
+                            .setNegativeButton("ОК",
+                                    (dialog, id) -> {
+                                        dialog.cancel();
+                                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -93,18 +121,20 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
 
     private void recyclerViewSetup() {
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         taskTagsAdapter = new TagListRecyclerViewAdapter(taskTags, null, this);
-        taskTagsAdapter.setChooseColor(getColor(R.color.not_identical_tag_color));
-        taskTagsAdapter.setNotChooseColor(getColor(R.color.identical_tag_color));
+
+        taskTagsAdapter.setChooseColor(ContextCompat.getColor(this, R.color.not_identical_tag_color));
+        taskTagsAdapter.setNotChooseColor(ContextCompat.getColor(this, R.color.identical_tag_color));
         taskRecyclerView.setAdapter(taskTagsAdapter);
     }
 
     private void sortTags() {
+        photoTagStatus = PhotoTagStatus.SUCCESS;
         for (String tag : taskTags) {
-            if (predictionResults.contains(tag)) {
-                //photoTagsAdapter.setTagChosenState(tag, true);
-            } else {
+            if (!predictionResults.contains(tag)) {
                 taskTagsAdapter.setTagChosenState(tag, true);
+                photoTagStatus = PhotoTagStatus.FAILURE;
             }
         }
     }
@@ -117,7 +147,11 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         }
         recyclerViewSetup();
         sortTags();
-       // progressBar1.setVisibility(View.GONE);
+        // progressBar1.setVisibility(View.GONE);
         progressBar2.setVisibility(View.GONE);
+    }
+
+    private enum PhotoTagStatus {
+        NOT_STARTED, SUCCESS, FAILURE
     }
 }

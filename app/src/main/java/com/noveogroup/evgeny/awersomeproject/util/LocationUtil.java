@@ -66,7 +66,7 @@ public class LocationUtil {
 
     public void addLocationUpdatesListener(UpdatedLocationHandler handler) {
         updatedLocationHandlers.add(handler);
-        if (updatedLocationHandlers.size() == 1) {
+        if (!googleApiClient.isConnected()) {
             googleApiClient.connect();
         }
     }
@@ -81,7 +81,11 @@ public class LocationUtil {
     protected void updateAllListeners(Location location) {
         lastUpdatedLocation = location;
         for (int i =0;i<updatedLocationHandlers.size();i++ ) {
-            updatedLocationHandlers.get(i).handleUpdatedLocation(location);
+            boolean remove = updatedLocationHandlers.get(i).handleUpdatedLocation(location);
+            if (remove){
+                updatedLocationHandlers.remove(i);
+            }
+
         }
     }
 
@@ -95,6 +99,6 @@ public class LocationUtil {
     }
 
     public interface UpdatedLocationHandler {
-        void handleUpdatedLocation(Location location);
+        boolean handleUpdatedLocation(Location location);
     }
 }

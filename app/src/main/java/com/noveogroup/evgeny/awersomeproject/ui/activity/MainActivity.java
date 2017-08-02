@@ -1,13 +1,16 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -38,8 +41,6 @@ import butterknife.OnClick;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 public class MainActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
-
-
     private static final int RC_SIGN_IN = 1;
     Context context;
     @BindView(R.id.get_random_task_button)
@@ -58,7 +59,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         ButterKnife.bind(this);
         context = this;
         requestLocationPermission();
+
         // Configure Google Sign In
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
@@ -74,6 +77,35 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         if (currentUser == null) {
             signInButton.setVisibility(View.VISIBLE);
         }
+        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Важное сообщение!")
+                        .setMessage("Чтобы выполнять или добавлять задания мы должны понять где вы находитесь")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> {
+                                    dialog.cancel();
+                                    requestLocationPermission();
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+                requestLocationPermission();
+            }
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
     }
 
     @Override
@@ -132,13 +164,18 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     }
 
     private void requestLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (hasLocationPermision()) {
             int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             return;
         }
+    }
+
+
+    private boolean hasLocationPermision() {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
     }
 
 
@@ -156,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             Location currentLocation = LocationUtil.getLastUpdatedLocation();
             if (currentLocation != null) {
                 startRandomTask(currentLocation);
-            }
-            else {
-                LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+            } else {
+                Toast.makeText(this, "Can't get your location", Toast.LENGTH_SHORT).show();
+                //LocationUtil.getInstance(this).addLocationUpdatesListener(this);
             }
         });
     }
@@ -176,19 +213,10 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             Task randomTask = dataSet.get(new Random().nextInt(dataSet.size()));
             Intent intent = TaskDetailsActivity.getIntent(this, randomTask);
             startActivity(intent);
-        }
-        else {
-            Toast.makeText(this,"Нет заданий расположенных недалеко от вас",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Нет заданий расположенных недалеко от вас", Toast.LENGTH_SHORT).show();
         }
         rndTaskButton.setEnabled(true);
-    }
-
-
-    private ProgressDialog getProgressDialog() {
-        ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.setTitle("Wait");
-        progressDialog.setMessage("Loading tasks..");
-        return progressDialog;
     }
 
     @OnClick(R.id.goToListButton)
@@ -199,8 +227,10 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
 
     @Override
-    public void handleUpdatedLocation(Location location) {
-        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
-        startRandomTask(location);
+    public boolean handleUpdatedLocation(Location location) {
+
+        //LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
+
+        return true;
     }
 }

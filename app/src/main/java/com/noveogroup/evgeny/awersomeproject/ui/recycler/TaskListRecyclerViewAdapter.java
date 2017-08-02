@@ -79,7 +79,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
 
         Glide.with(context)
                 .load(task.getImageUrl())
-                .bitmapTransform(new CenterCrop(holder.title.getContext()),new BlurTransformation(holder.title.getContext(), 60))
+                .bitmapTransform(new CenterCrop(holder.title.getContext()),new BlurTransformation(holder.title.getContext(), 85))
                 .into(holder.imageView);
     }
 

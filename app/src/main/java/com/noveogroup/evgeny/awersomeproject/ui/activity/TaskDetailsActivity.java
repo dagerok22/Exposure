@@ -51,9 +51,6 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     static final int REQUEST_TAKE_PHOTO = 3;
     private static final String KEY_TASK_ITEM = "TASK_ITEM";
     private static final String USER_MARKER_TAG = "You";
-    private static final String KEY_CURRENT_LOCATION_LAT = "KEY_CURRENT_LOCATION_LAT";
-    private static final String KEY_CURRENT_LOCATION_LNG = "KEY_CURRENT_LOCATION_LNG";
-
 
     @BindView(R.id.progress_bar_map)
     ProgressBar progressBarMap;
@@ -80,8 +77,6 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
 
     private GoogleMap map;
     private Marker userMarker;
-    private Logger logger;
-    private LocationUtil locationUtil;
     private Location currentLocation;
     private LatLng currentPosition;
     private LatLng taskPosition;
@@ -98,11 +93,8 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         //TODO: initialize in BaseActivity class
-        logger = LoggerFactory.getLogger(TaskDetailsActivity.class);
 
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
         currentLocation = LocationUtil.getLastUpdatedLocation();
@@ -121,16 +113,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
             distance.setText(R.string.find_user_coords);
         }
         age.setText(DateTransformerUtil.getAgeOfTask(currentTask.getDate(), getApplicationContext()));
-
-
         initializeMap();
-        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
-        super.onDestroy();
     }
 
     private void updateDistance() {
@@ -139,6 +122,18 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
                 taskPosition)
                 ) / 1000)
         );
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
     }
 
     private void initializeMap() {
@@ -150,7 +145,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
             LatLng taskPos = new LatLng(currentTask.getLat(), currentTask.getLng());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(taskPos, 16.0f));
             map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            map.setMinZoomPreference(16.0f);
+           // map.setMinZoomPreference(16.0f);
             addTaskCircle(taskPos);
         });
     }
@@ -206,7 +201,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         }
     }
     @Override
-    public void handleUpdatedLocation(Location location) {
+    public boolean handleUpdatedLocation(Location location) {
         if (userMarker != null) {
             updateUserMarker(location);
         } else {
@@ -216,6 +211,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         this.currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         updateDistance();
         progressBarMap.setVisibility(View.GONE);
+        return false;
     }
 
 }

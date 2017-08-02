@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -103,6 +104,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
 
     private void recyclerViewSetup() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new TagListRecyclerViewAdapter(predictionResults, this, this);
         recyclerView.setAdapter(adapter);
     }
@@ -126,6 +128,9 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
             if (chosenTags.size() < MAX_CHOSEN_TAGS) {
                 chosenTags.add(tag);
                 adapter.setTagChosenState(tag, true);
+            }
+            else {
+                Toast.makeText(this,"Can't add more tags to the task",Toast.LENGTH_SHORT).show();
             }
         }
     }

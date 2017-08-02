@@ -15,7 +15,7 @@
     <color name="task_item_author_color">@color/colorPrimaryDark</color>
     <color name="task_item_age_color">@color/colorPrimaryDark</color>
     <color name="toolbar">#ffeb3b</color>
-    <color name="marker_circle_color">#66692444</color>
+    <color name="marker_circle_color">#c57bccc8</color>
     <color name="cards_background">#ff849e</color>
     <color name="test_1">#232D3B</color>
     <color name="test_2">#EF7B47</color>
