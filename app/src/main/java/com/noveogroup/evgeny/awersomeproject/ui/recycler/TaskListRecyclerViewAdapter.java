@@ -23,6 +23,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
@@ -39,6 +40,8 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRecyclerViewAdapter.ViewHolder> {
     private final Context context;
+    private final FirebaseUser currentUser;
+    private final String currentUserUid;
     private Location currentLocation;
     private List<Task> dataSet;
 
@@ -50,8 +53,10 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         this.dataSet = dataSet;
     }
 
-    public TaskListRecyclerViewAdapter(Context applicationContext) {
+    public TaskListRecyclerViewAdapter(Context applicationContext, FirebaseUser currentUser) {
         context = applicationContext;
+        this.currentUser = currentUser;
+        currentUserUid = currentUser.getUid();
     }
 
     @Override
@@ -63,6 +68,9 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = dataSet.get(position);
+        if (task.getUsersWhoDone().contains(currentUserUid)){
+            return;
+        }
         holder.title.setText(task.getName());
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));

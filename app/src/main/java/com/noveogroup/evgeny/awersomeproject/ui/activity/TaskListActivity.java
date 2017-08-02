@@ -41,6 +41,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
     private Location currentLocation;
     private FirebaseAuth firebaseAuth;
     private RealTimeDBApi dbApi;
+    private FirebaseUser currentUser;
 
 
     @Override
@@ -49,10 +50,10 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         setContentView(R.layout.activity_task_list);
         ButterKnife.bind(this);
         firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        currentUser = firebaseAuth.getCurrentUser();
         //Toast.makeText(getApplicationContext(), currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
         dbApi = RealTimeDBApi.getInstance();
-        adapter = new TaskListRecyclerViewAdapter(this);
+        adapter = new TaskListRecyclerViewAdapter(this, currentUser);
         initializeRecyclerView();
         initializeOnRecyclerItemClickListener();
         synchronizeData();

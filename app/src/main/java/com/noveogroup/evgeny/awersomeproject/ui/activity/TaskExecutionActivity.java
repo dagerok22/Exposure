@@ -25,6 +25,7 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.ClarifaiHelper;
+import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -121,6 +122,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
                             usersWhoDone = new ArrayList<>();
                         }
                         usersWhoDone.add(TaskExecutionActivity.this.currentUser.getUid());
+                        data.setUsersWhoDone(usersWhoDone);
                         TaskExecutionActivity.this.dbApi.updateTask(data);
                     });
 
