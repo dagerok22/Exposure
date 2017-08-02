@@ -145,7 +145,6 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
             LatLng taskPos = new LatLng(currentTask.getLat(), currentTask.getLng());
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(taskPos, 16.0f));
             map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-           // map.setMinZoomPreference(16.0f);
             addTaskCircle(taskPos);
         });
     }

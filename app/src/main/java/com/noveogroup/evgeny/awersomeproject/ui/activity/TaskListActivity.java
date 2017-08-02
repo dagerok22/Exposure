@@ -55,7 +55,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         adapter = new TaskListRecyclerViewAdapter(this);
         initializeRecyclerView();
         initializeOnRecyclerItemClickListener();
-        synchronizeDataAndLocationFetching();
+        synchronizeData();
     }
 
     @Override
@@ -128,7 +128,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
                         distancePair);
     }
 
-    private void synchronizeDataAndLocationFetching() {
+    private void synchronizeData() {
         dbApi.getAllTasks(data -> {
             dataSet = data;
             adapter.setDataSet(dataSet);
@@ -137,9 +137,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
             }
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
-        });
-        LocationUtil.getInstance(this)
-                .addLocationUpdatesListener(this);
+        });       
     }
 
 

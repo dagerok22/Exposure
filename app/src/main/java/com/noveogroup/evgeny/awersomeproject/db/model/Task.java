@@ -12,7 +12,7 @@ public class Task implements Serializable {
     private double lng;
     private float rating;
     private String authorName;
-    private String  authorId;
+    private String authorId;
     private String date;
 
     public Task() {

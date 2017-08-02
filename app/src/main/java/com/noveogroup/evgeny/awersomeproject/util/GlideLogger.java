@@ -5,9 +5,6 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.Locale;
 
-/**
- * Created by admin on 01.08.2017.
- */
 public class GlideLogger<T, R> implements RequestListener<T, R> {
     @Override
     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {

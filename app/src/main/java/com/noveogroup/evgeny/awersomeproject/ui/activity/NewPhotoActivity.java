@@ -29,6 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import clarifai2.dto.prediction.Concept;
+import jp.wasabeef.glide.transformations.CropSquareTransformation;
 
 public class NewPhotoActivity extends AppCompatActivity implements TagListRecyclerViewAdapter.ItemTapListener,
         ClarifaiHelper.PostExecuteListener {
@@ -99,11 +100,12 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
         String photoPath = getIntent().getStringExtra(PHOTO_PATH);
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
         clarifaiHelper.startAsyncTask();
-        Glide.with(this).load(new File(photoPath)).into(imageView);
+        Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
     }
 
     private void recyclerViewSetup() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         adapter = new TagListRecyclerViewAdapter(predictionResults, this, this);
         recyclerView.setAdapter(adapter);

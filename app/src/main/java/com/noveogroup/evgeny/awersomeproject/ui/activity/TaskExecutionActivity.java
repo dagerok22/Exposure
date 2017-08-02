@@ -33,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import clarifai2.dto.prediction.Concept;
+import jp.wasabeef.glide.transformations.CropSquareTransformation;
 
 public class TaskExecutionActivity extends AppCompatActivity implements ClarifaiHelper.PostExecuteListener {
 
@@ -40,7 +41,6 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     public static final String TASK_NAME = "task_name";
     public static final String TAGS = "tags";
 
-    static final private String LOG_TAG = "TaskExecutionActivity";
     @BindView(R.id.photo_view)
     public ImageView imageView;
     @BindView(R.id.task_name)
@@ -82,7 +82,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         String photoPath = getIntent().getStringExtra(PHOTO_PATH);
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
         clarifaiHelper.startAsyncTask();
-        Glide.with(this).load(new File(photoPath)).into(imageView);
+        Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
         photoTagStatus = PhotoTagStatus.NOT_STARTED;
     }
 
@@ -131,6 +131,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
 
     private void recyclerViewSetup() {
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskRecyclerView.setNestedScrollingEnabled(false);
         taskRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         taskTagsAdapter = new TagListRecyclerViewAdapter(taskTags, null, this);
 
@@ -157,7 +158,6 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         }
         recyclerViewSetup();
         sortTags();
-        // progressBar1.setVisibility(View.GONE);
         progressBar2.setVisibility(View.GONE);
     }
 

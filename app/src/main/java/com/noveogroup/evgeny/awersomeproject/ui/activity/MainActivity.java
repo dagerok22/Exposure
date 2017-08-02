@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         currentUser = auth.getCurrentUser();
 
 
-        LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+
+
     }
 
     @Override
@@ -116,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             return;
+        }
+        else {
+            LocationUtil.getInstance(this).addLocationUpdatesListener(this);
         }
     }
 

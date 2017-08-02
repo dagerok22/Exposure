@@ -38,9 +38,6 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
     private String currentPhotoPath;
     private ArrayList<String> tags;
     private String taskName;
-    private LocationRequest locationRequest;
-    private GoogleApiClient googleApiClient;
-    private LocationUtil locationUtil;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
 
@@ -112,7 +109,6 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
 
     @Override
     public boolean handleUpdatedLocation(Location location) {
-        //addTaskToDatabase(location);
         return false;
     }
 

@@ -83,7 +83,7 @@ public class LocationUtil {
         for (int i =0;i<updatedLocationHandlers.size();i++ ) {
             boolean remove = updatedLocationHandlers.get(i).handleUpdatedLocation(location);
             if (remove){
-                updatedLocationHandlers.remove(i);
+                removeLocationUpdatesListener(updatedLocationHandlers.get(i));
             }
 
         }
