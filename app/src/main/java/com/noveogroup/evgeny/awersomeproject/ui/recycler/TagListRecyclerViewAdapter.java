@@ -23,20 +23,10 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
     private List<ChosenTag> chosenTags;
     private ItemTapListener itemTapListener;
     private int notChooseColor;
-
-    public void setNotChooseColor(int notChooseColor) {
-        this.notChooseColor = notChooseColor;
-    }
-
-    public void setChooseColor(int chooseColor) {
-        this.chooseColor = chooseColor;
-    }
-
     private int chooseColor;
     private int choosenTextColor;
     private int notChoosenTextColor;
     private Context context;
-
     public TagListRecyclerViewAdapter(List<String> data, ItemTapListener itemTapListener, Context context) {
         this.context = context;
         this.chooseColor = ContextCompat.getColor(context, R.color.colorPrimary);
@@ -48,6 +38,14 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
         for (String tag : data) {
             chosenTags.add(new ChosenTag(tag));
         }
+    }
+
+    public void setNotChooseColor(int notChooseColor) {
+        this.notChooseColor = notChooseColor;
+    }
+
+    public void setChooseColor(int chooseColor) {
+        this.chooseColor = chooseColor;
     }
 
     @Override

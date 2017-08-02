@@ -50,6 +50,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
     ArrayList<String> chosenTags;
     List<String> predictionResults;
     TagListRecyclerViewAdapter adapter;
+    String photoPath;
 
     public static Intent newIntent(Context context, String photoPath) {
         Intent intent = new Intent(context, NewPhotoActivity.class);
@@ -97,7 +98,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         chosenTags = new ArrayList<>();
-        String photoPath = getIntent().getStringExtra(PHOTO_PATH);
+        photoPath = getIntent().getStringExtra(PHOTO_PATH);
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
         clarifaiHelper.startAsyncTask();
         Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
@@ -116,6 +117,9 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
         predictionResults = new ArrayList<>();
         for (Concept concept : clarifaiOutputs) {
             predictionResults.add(concept.name());
+        }
+        if(imageView.getHeight()<10){
+            Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
         }
         recyclerViewSetup();
         progressBar.setVisibility(View.GONE);

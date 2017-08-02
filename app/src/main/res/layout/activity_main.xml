@@ -65,6 +65,24 @@
             fancy:fb_text="@string/get_random_task"
             fancy:fb_textColor="@color/colorPrimary" />
 
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/open_user_list"
+            android:layout_width="@dimen/default_button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/button_layout_margin_main_screen"
+            android:paddingBottom="@dimen/button_padding_bottom"
+            android:paddingEnd="@dimen/button_padding_right"
+            android:paddingStart="@dimen/button_padding_left"
+            android:paddingTop="@dimen/button_padding_top"
+            fancy:fb_borderColor="@color/colorPrimary"
+            fancy:fb_borderWidth="@dimen/button_border_width"
+            fancy:fb_defaultColor="@color/defaultButtonBackgroundColor"
+            fancy:fb_focusColor="@color/focusButtonBackgroundColor"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="@string/open_user_list"
+            fancy:fb_textColor="@color/colorPrimary" />
+
     </LinearLayout>
 
     <mehdi.sakout.fancybuttons.FancyButton

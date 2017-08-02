@@ -150,6 +150,29 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         });
     }
 
+    @OnClick(R.id.open_user_list)
+    public void onUserListBtnClick() {
+        startActivity(UserListActivity.newIntent(this));
+    }
+
+    @OnClick(R.id.goToListButton)
+    public void onButtonClick() {
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.log_out_button)
+    void logOutClicked(){
+        auth.signOut();
+        Intent intent = new Intent(this, LogInActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean handleUpdatedLocation(Location location) {
+        return true;
+    }
     private void startRandomTask(Location currentLocation) {
         ArrayList<Task> dataSet = new ArrayList<>();
         for (Task task : tasks) {
@@ -169,25 +192,4 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         rndTaskButton.setEnabled(true);
     }
 
-    @OnClick(R.id.goToListButton)
-    public void onButtonClick() {
-        Intent intent = new Intent(this, TaskListActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.log_out_button)
-    void logOutClicked(){
-        auth.signOut();
-        Intent intent = new Intent(this, LogInActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public boolean handleUpdatedLocation(Location location) {
-
-        //LocationUtil.getInstance(this).removeLocationUpdatesListener(this);
-
-        return true;
-    }
 }
