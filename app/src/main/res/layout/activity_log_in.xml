@@ -1,0 +1,81 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:text="Exposure"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/email"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
+            android:hint="Email"
+            android:inputType="textEmailAddress" />
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/confirm_password"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="Confirm password"
+            android:inputType="textPassword" />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/log_in_btn"
+            android:layout_width="@dimen/default_button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/button_layout_margin_main_screen"
+            android:layout_marginBottom="80dp"
+            android:paddingBottom="@dimen/button_padding_bottom"
+            android:paddingEnd="@dimen/button_padding_right"
+            android:paddingStart="@dimen/button_padding_left"
+            android:paddingTop="@dimen/button_padding_top"
+            fancy:fb_borderColor="@color/colorAccent"
+            fancy:fb_borderWidth="@dimen/button_border_width"
+            fancy:fb_defaultColor="@color/defaultButtonBackgroundColor"
+            fancy:fb_focusColor="@color/colorAccent"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="@string/log_in_button_text"
+            fancy:fb_textColor="@color/colorAccent" />
+
+        <CheckBox
+            android:id="@+id/create_new_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="Create a new account" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.Material.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</FrameLayout>

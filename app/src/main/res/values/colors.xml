@@ -22,6 +22,8 @@
     <color name="test_3">#7ACCC8</color>
     <color name="not_identical_tag_color">#ef9a9a</color>
     <color name="identical_tag_color">#b2ff59</color>
+    <color name="not_chosen_tag_button_text_color">#6c86ab</color>
 
     <color name="add_task_activity_rules">#999999</color>
+    <color name="cosen_tag_text_color">#FFFFFF</color>
 </resources>
