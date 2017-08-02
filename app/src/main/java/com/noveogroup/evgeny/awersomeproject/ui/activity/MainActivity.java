@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,10 +41,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     Context context;
     @BindView(R.id.get_random_task_button)
     FancyButton rndTaskButton;
-    @BindView(R.id.sign_in_button)
-    FancyButton signInButton;
     private GoogleApiClient googleApiClient;
-    private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
     private List<Task> tasks;
     private FirebaseAuth auth;
@@ -71,11 +67,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                 .build();
 
         auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
 
 
-        if (currentUser == null) {
-            signInButton.setVisibility(View.VISIBLE);
-        }
         LocationUtil.getInstance(this).addLocationUpdatesListener(this);
     }
 
@@ -110,14 +104,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        updateUI(currentUser);
     }
 
     private void updateUI(FirebaseUser user) {
-        if (user != null) {
-            signInButton.setVisibility(View.GONE);
-        }
     }
 
     private void requestLocationPermission() {
@@ -182,6 +171,13 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         startActivity(intent);
     }
 
+    @OnClick(R.id.log_out_button)
+    void logOutClicked(){
+        auth.signOut();
+        Intent intent = new Intent(this, LogInActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     public boolean handleUpdatedLocation(Location location) {

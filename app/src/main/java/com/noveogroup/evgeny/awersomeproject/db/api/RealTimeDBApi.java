@@ -72,7 +72,7 @@ public class RealTimeDBApi {
                           String imageUrl,
                           LatLng coords,
                           float rating,
-                          int authorId,
+                          String authorId,
                           String authorName,
                           Date date) {
         Task newTask = new Task();
@@ -107,16 +107,33 @@ public class RealTimeDBApi {
         });
     }
 
-    public void writeUser(String name,
+    public void getUserById(String id, OnUserByIdResultCallBack callBack) {
+        usersRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    callBack.onDataReceived(dataSnapshot.getValue(User.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void writeUser(String id,
+                          String name,
                           float rating,
                           Date dateOfReg) {
         User newUser = new User();
         newUser.setName(name);
+        newUser.setId(id);
         newUser.setRating(rating);
         newUser.setDateOfRegistration(DateTransformerUtil.getDateAsString(dateOfReg));
 
-        DatabaseReference newTaskRef = tasksRef.push();
-        newTaskRef.setValue(newUser);
+        DatabaseReference newUserRef = usersRef.child(id);
+        newUserRef.setValue(newUser);
+
+
     }
 
     public void writeImageAndGetUrl(File image, HandleImageFileCallback handleUri) {
@@ -128,6 +145,7 @@ public class RealTimeDBApi {
         uploadTask.addOnFailureListener(handleUri::onFailure)
                 .addOnSuccessListener(taskSnapshot -> handleUri.onSuccess(taskSnapshot.getDownloadUrl()));
     }
+
     public void writeImageAndGetUrl(Uri image, HandleImageUriCallback handleUri) {
         StorageReference storageRef = storage.getReference(IMAGES_NODE);
         StorageReference imagesRef = storageRef.child(image.getLastPathSegment());
@@ -141,17 +159,22 @@ public class RealTimeDBApi {
         void onDataReceived(List<Task> data);
     }
 
-    interface OnUserResultCallBack {
+    public interface OnUserResultCallBack {
         void onDataReceived(List<User> data);
+    }
+    public interface OnUserByIdResultCallBack {
+        void onDataReceived(User data);
     }
 
     public interface HandleImageUriCallback {
         void onSuccess(Uri imageRef);
+
         void onFailure(Exception e);
     }
 
     public interface HandleImageFileCallback {
         void onSuccess(Uri imageRef);
+
         void onFailure(Exception e);
     }
 }

@@ -12,7 +12,7 @@ public class Task implements Serializable {
     private double lng;
     private float rating;
     private String authorName;
-    private int authorId;
+    private String  authorId;
     private String date;
 
     public Task() {
@@ -74,11 +74,11 @@ public class Task implements Serializable {
         this.authorName = authorName;
     }
 
-    public int getAuthorId() {
+    public String  getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(int authorId) {
+    public void setAuthorId(String authorId) {
         this.authorId = authorId;
     }
 

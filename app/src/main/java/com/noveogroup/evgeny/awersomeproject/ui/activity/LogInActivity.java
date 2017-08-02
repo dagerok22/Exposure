@@ -21,7 +21,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
+import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 
+import java.util.Date;
 import java.util.concurrent.Executor;
 
 import butterknife.BindView;
@@ -39,6 +41,8 @@ public class LogInActivity extends AppCompatActivity {
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
+    @BindView(R.id.name)
+    EditText name;
     @BindView(R.id.email)
     EditText email;
     @BindView(R.id.password)
@@ -52,6 +56,7 @@ public class LogInActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private boolean isChecked;
     private FirebaseUser user;
+    private RealTimeDBApi dbApi;
 
 
     @Override
@@ -61,6 +66,7 @@ public class LogInActivity extends AppCompatActivity {
         unbinder = ButterKnife.bind(this);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        dbApi = RealTimeDBApi.getInstance();
         updateUI();
     }
 
@@ -75,6 +81,7 @@ public class LogInActivity extends AppCompatActivity {
     void signIn() {
         progressBar.setVisibility(View.VISIBLE);
         signInButton.setEnabled(false);
+        createNewCheckBox.setEnabled(false);
         if (isChecked){
             if (!isEmailValid(email.getText().toString())){
                 Toast.makeText(this, "Not valid email", Toast.LENGTH_SHORT).show();
@@ -89,6 +96,7 @@ public class LogInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             user = auth.getCurrentUser();
+                            dbApi.writeUser(user.getUid(), name.getText().toString(), 0f, new Date());
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -123,16 +131,21 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+        createNewCheckBox.setEnabled(true);
         signInButton.setEnabled(true);
         progressBar.setVisibility(View.GONE);
         if (user != null){
             Intent intent = new Intent(this, MainActivity.class);
+            dbApi.writeUser(user.getUid(), name.getText().toString(), 0f, new Date());
             startActivity(intent);
+            finish();
         }
         if (isChecked){
+            name.setVisibility(View.VISIBLE);
             signInButton.setText("Sign up");
             confirmPassword.setVisibility(View.VISIBLE);
         }else {
+            name.setVisibility(View.GONE);
             signInButton.setText("Log in");
             confirmPassword.setVisibility(View.GONE);
         }

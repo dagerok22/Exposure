@@ -10,7 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
@@ -34,13 +38,19 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
     private String currentPhotoPath;
     private ArrayList<String> tags;
     private String taskName;
-
+    private LocationRequest locationRequest;
+    private GoogleApiClient googleApiClient;
+    private LocationUtil locationUtil;
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_task);
         ButterKnife.bind(this);
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
     }
 
     @Override
@@ -108,14 +118,15 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
 
     private void addTaskToDatabase(final Location location) {
         float rating = 0;
-        String authorName = "Evgen";
-        int authorId = 5;
+        String authorId = currentUser.getUid();
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
         Toast.makeText(getApplicationContext(), "got location", Toast.LENGTH_SHORT).show();
         dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
             @Override
             public void onSuccess(Uri imageRef) {
-                dbApi.writeTask(taskName, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, authorName, new Date());
+                dbApi.getUserById(authorId, data -> {
+                    dbApi.writeTask(taskName, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, data.getName(), new Date());
+                });
                 Toast.makeText(getApplicationContext(), "Success send", Toast.LENGTH_SHORT).show();
             }
 
