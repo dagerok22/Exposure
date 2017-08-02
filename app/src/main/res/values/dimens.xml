@@ -22,6 +22,7 @@
     <dimen name="button_padding_top">10dp</dimen>
     <dimen name="task_item_details_bottom_section_padding">8dp</dimen>
     <dimen name="default_button_width">150dp</dimen>
+    <dimen name="default_log_in_button_width">120dp</dimen>
     <dimen name="add_task_activity_rules_size">17dp</dimen>
     <dimen name="add_new_task_name_title_size">22sp</dimen>
 </resources>

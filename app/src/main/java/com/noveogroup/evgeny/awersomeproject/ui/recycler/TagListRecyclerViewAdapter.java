@@ -33,12 +33,16 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
     }
 
     private int chooseColor;
+    private int choosenTextColor;
+    private int notChoosenTextColor;
     private Context context;
 
     public TagListRecyclerViewAdapter(List<String> data, ItemTapListener itemTapListener, Context context) {
         this.context = context;
         this.chooseColor = ContextCompat.getColor(context, R.color.colorPrimary);
+        this.choosenTextColor = ContextCompat.getColor(context, R.color.cosen_tag_text_color);
         this.notChooseColor = ContextCompat.getColor(context, R.color.cardview_light_background);
+        this.notChoosenTextColor = ContextCompat.getColor(context, R.color.colorPrimary);
         this.itemTapListener = itemTapListener;
         this.chosenTags = new ArrayList<>();
         for (String tag : data) {
@@ -135,8 +139,10 @@ public class TagListRecyclerViewAdapter extends RecyclerView.Adapter<TagListRecy
             currentPosition = position;
             if (chosenTags.get(position).isChosen()) {
                 cardView.setBackgroundColor(chooseColor);
+                tag.setTextColor(choosenTextColor);
             } else {
                 cardView.setBackgroundColor(notChooseColor);
+                tag.setTextColor(notChoosenTextColor);
             }
         }
     }
