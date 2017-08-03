@@ -16,6 +16,8 @@ import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.db.model.User;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.UserListRecyclerViewAdapter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -45,7 +47,9 @@ public class UserListActivity extends AppCompatActivity implements RealTimeDBApi
 
     @Override
     public void onDataReceived(List<User> data) {
-        data.sort((user1, user2) -> {
+        ArrayList<User> users = new ArrayList<>(data);
+
+        users.sort((user1, user2) -> {
             if (user2.getRating() - user1.getRating() != 0) {
                 return user2.getRating() - user1.getRating();
             } else{
@@ -56,6 +60,6 @@ public class UserListActivity extends AppCompatActivity implements RealTimeDBApi
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         usersRecyclerView.setNestedScrollingEnabled(false);
         usersRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        usersRecyclerView.setAdapter(new UserListRecyclerViewAdapter(data));
+        usersRecyclerView.setAdapter(new UserListRecyclerViewAdapter(users));
     }
 }
