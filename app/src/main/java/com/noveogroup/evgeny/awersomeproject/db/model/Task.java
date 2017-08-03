@@ -96,6 +96,15 @@ public class Task implements Serializable {
         return authorId;
     }
 
+    public boolean isUserDone(String user){
+        if (usersWhoDone == null) {
+            return false;
+        } else if (!usersWhoDone.contains(user)) {
+            return false;
+        }
+        return true;
+    }
+
     public void setAuthorId(String authorId) {
         this.authorId = authorId;
     }

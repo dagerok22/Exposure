@@ -61,6 +61,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
     private TagListRecyclerViewAdapter taskTagsAdapter;
     private RealTimeDBApi dbApi;
     private FirebaseUser currentUser;
+    private String photoPath;
     private String taskId;
 
 
@@ -85,7 +86,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         taskTags = getIntent().getStringArrayListExtra(TAGS);
         taskId = getIntent().getStringExtra(TASK_ID);
         taskTags = getIntent().getStringArrayListExtra(TAGS);
-        String photoPath = getIntent().getStringExtra(PHOTO_PATH);
+        photoPath = getIntent().getStringExtra(PHOTO_PATH);
         ClarifaiHelper clarifaiHelper = new ClarifaiHelper(photoPath, this);
         clarifaiHelper.startAsyncTask();
         Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
@@ -170,6 +171,9 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         predictionResults = new ArrayList<>();
         for (Concept concept : clarifaiOutputs) {
             predictionResults.add(concept.name());
+        }
+        if(imageView.getHeight()<10){
+            Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
         }
         recyclerViewSetup();
         sortTags();

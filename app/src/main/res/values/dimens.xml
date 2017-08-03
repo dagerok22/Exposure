@@ -15,7 +15,7 @@
     <dimen name="tag_text_size">20sp</dimen>
     <dimen name="tags_cards_tite_text_size">36sp</dimen>
     <dimen name="button_border_width">1dp</dimen>
-    <dimen name="button_layout_margin_main_screen">20dp</dimen>
+    <dimen name="button_layout_margin_main_screen">16dp</dimen>
     <dimen name="button_padding_bottom">10dp</dimen>
     <dimen name="button_padding_left">20dp</dimen>
     <dimen name="button_padding_right">20dp</dimen>

@@ -135,10 +135,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
             List<String> usersWhoDone;
             dataSet = new ArrayList<>();
             for (Task task : data) {
-                usersWhoDone = task.getUsersWhoDone();
-                if (usersWhoDone == null) {
-                    dataSet.add(task);
-                } else if (usersWhoDone != null && !usersWhoDone.contains(currentUserUid)) {
+                if (!task.isUserDone(currentUserUid)) {
                     dataSet.add(task);
                 }
             }

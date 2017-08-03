@@ -144,8 +144,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             if (currentLocation != null) {
                 startRandomTask(currentLocation);
             } else {
-                Toast.makeText(this, "Can't get your location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.cant_get_your_location, Toast.LENGTH_SHORT).show();
                 //LocationUtil.getInstance(this).addLocationUpdatesListener(this);
+                rndTaskButton.setEnabled(true);
             }
         });
     }
@@ -179,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             double dist = LocationUtil.getDistance(
                     new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                     new LatLng(task.getLat(), task.getLng()));
-            if (dist < 20000)
+            String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if (!task.isUserDone(currentUser) && dist < 20000)
                 dataSet.add(task);
         }
         if (dataSet.size() > 0) {
