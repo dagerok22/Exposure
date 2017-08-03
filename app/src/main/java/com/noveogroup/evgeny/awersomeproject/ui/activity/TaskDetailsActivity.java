@@ -1,15 +1,12 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -37,14 +34,9 @@ import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 import com.noveogroup.evgeny.awersomeproject.util.PhotoHelper;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -54,6 +46,7 @@ import butterknife.OnClick;
 public class TaskDetailsActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
     static final int REQUEST_TAKE_PHOTO = 3;
+    static final int REQUEST_DO_TASK = 4;
     private static final String KEY_TASK_ITEM = "TASK_ITEM";
     private static final String USER_MARKER_TAG = "You";
 
@@ -75,15 +68,10 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     TextView age;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-
     Task currentTask;
-
     String currentPhotoPath;
-
     private GoogleMap map;
     private Marker userMarker;
-//    private Location currentLocation;
-//    private LatLng currentPosition;
     private LatLng taskPosition;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
@@ -125,7 +113,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     }
 
     private void updateDistance() {
-       Location currentLocation = LocationUtil.getLastUpdatedLocation();
+        Location currentLocation = LocationUtil.getLastUpdatedLocation();
         distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
                 new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                 taskPosition)
@@ -188,7 +176,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
             return;
         }
         Location lastUpdatedLocation = LocationUtil.getLastUpdatedLocation();
-        if (lastUpdatedLocation == null){
+        if (lastUpdatedLocation == null) {
             Toast.makeText(this, R.string.cant_get_your_location, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -223,8 +211,12 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            //TODO переделай тэги
-            startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<>(currentTask.getTags()), currentTask.getTaskId()));
+            startActivityForResult(TaskExecutionActivity.newIntent(this, currentPhotoPath,
+                    currentTask.getName(), new ArrayList<>(currentTask.getTags()),
+                    currentTask.getTaskId()), REQUEST_DO_TASK);
+        }
+        if (requestCode == REQUEST_DO_TASK && resultCode == RESULT_OK) {
+            finish();
         }
     }
 

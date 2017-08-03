@@ -99,6 +99,7 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
             Location location = LocationUtil.getLastUpdatedLocation();
             if (location != null) {
                 addTaskToDatabase(location);
+                finish();
             }
             else {
                 Toast.makeText(this,"Мы не можем определить ваше местоположение. Задание не будет добавленно."
