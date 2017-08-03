@@ -91,6 +91,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
     }
 
 
@@ -136,8 +137,8 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
             if (currentLocation != null) {
                 adapter.setCurrentLocation(currentLocation);
             }
-            recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
         });
     }
 

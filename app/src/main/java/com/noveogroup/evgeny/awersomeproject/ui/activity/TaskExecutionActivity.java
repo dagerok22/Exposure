@@ -132,6 +132,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
                             .setNegativeButton("ОК",
                                     (dialog, id) -> {
                                         dialog.cancel();
+                                        finish();
                                     });
                     AlertDialog alert = builder.create();
                     alert.show();

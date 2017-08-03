@@ -51,12 +51,14 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     }
 
     public void setDataSet(List<Task> dataSet) {
-        this.dataSet = new ArrayList<>(dataSet);
+        this.dataSet.clear();
+        this.dataSet.addAll(dataSet);
     }
 
     public TaskListRecyclerViewAdapter(Context applicationContext, FirebaseUser currentUser) {
         context = applicationContext;
         this.currentUser = currentUser;
+        dataSet = new ArrayList<>();
         currentUserUid = currentUser.getUid();
     }
 
