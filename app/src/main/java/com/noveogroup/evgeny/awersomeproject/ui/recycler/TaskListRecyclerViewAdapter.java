@@ -83,10 +83,17 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             holder.distance.setText(R.string.find_user_coords);
         }
 
-        Glide.with(context)
-                .load(task.getImageUrl())
-                .bitmapTransform(new CenterCrop(holder.title.getContext()),new BlurTransformation(holder.title.getContext(), 85))
-                .into(holder.imageView);
+        if (task.isUserDone(currentUserUid)) {
+            Glide.with(context)
+                    .load(task.getImageUrl())
+                    .bitmapTransform(new CenterCrop(holder.title.getContext()))
+                    .into(holder.imageView);
+        }else {
+            Glide.with(context)
+                    .load(task.getImageUrl())
+                    .bitmapTransform(new CenterCrop(holder.title.getContext()), new BlurTransformation(holder.title.getContext(), 85))
+                    .into(holder.imageView);
+        }
     }
 
     public List<Task> getItems() {
