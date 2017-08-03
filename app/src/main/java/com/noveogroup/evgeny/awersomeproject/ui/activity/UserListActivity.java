@@ -49,7 +49,7 @@ public class UserListActivity extends AppCompatActivity implements RealTimeDBApi
     public void onDataReceived(List<User> data) {
         ArrayList<User> users = new ArrayList<>(data);
 
-        users.sort((user1, user2) -> {
+        Collections.sort(users,(user1, user2) -> {
             if (user2.getRating() - user1.getRating() != 0) {
                 return user2.getRating() - user1.getRating();
             } else{

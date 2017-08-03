@@ -75,7 +75,6 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));
         holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
-        holder.rating.setText(String.format(Locale.ENGLISH, "%.1f", task.getRating()));
         currentLocation = LocationUtil.getLastUpdatedLocation();
         if (currentLocation != null) {
             holder.distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
@@ -121,7 +120,6 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
         ImageView imageView;
         TextView title;
         TextView tags;
-        TextView rating;
         TextView author;
         TextView age;
         TextView distance;
@@ -134,7 +132,6 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             tags = v.findViewById(R.id.tags);
             author = v.findViewById(R.id.author);
             age = v.findViewById(R.id.age);
-            rating = v.findViewById(R.id.rating);
             distance = v.findViewById(R.id.distance);
             topSectionContainer = v.findViewById(R.id.top_section_container);
         }

@@ -63,22 +63,11 @@
                 android:transitionName="author" />
 
             <TextView
-                android:id="@+id/rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/tags"
-                android:textAlignment="textStart"
-                android:textColor="@color/task_item_author_color"
-                android:textSize="@dimen/task_item_author_size"
-                android:transitionName="rating" />
-
-            <TextView
                 android:id="@+id/age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/rating"
+                android:layout_below="@+id/author"
                 android:textAlignment="textEnd"
                 android:textColor="@color/task_item_age_color"
                 android:textSize="@dimen/task_item_author_size"

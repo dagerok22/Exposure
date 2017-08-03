@@ -114,8 +114,6 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
                 Pair.create(viewHolder.itemView.findViewById(R.id.tags), "tags");
         Pair<View, String> authorPair =
                 Pair.create(viewHolder.itemView.findViewById(R.id.author), "author");
-        Pair<View, String> ratingPair =
-                Pair.create(viewHolder.itemView.findViewById(R.id.rating), "rating");
         Pair<View, String> agePair =
                 Pair.create(viewHolder.itemView.findViewById(R.id.age), "age");
         Pair<View, String> distancePair =
@@ -125,7 +123,6 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
                         titlePair,
                         tagsPair,
                         authorPair,
-                        ratingPair,
                         agePair,
                         distancePair);
     }

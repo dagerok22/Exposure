@@ -87,6 +87,14 @@ public class LogInActivity extends AppCompatActivity {
                 Toast.makeText(this, "Not valid email", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (password.getText().toString().isEmpty()){
+                Toast.makeText(this, "Password can't be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (name.getText().toString().isEmpty()){
+                Toast.makeText(this, "Name can't be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (!password.getText().toString().equals(confirmPassword.getText().toString())){
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;

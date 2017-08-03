@@ -51,72 +51,56 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="7"
-            android:padding="@dimen/task_item_details_bottom_section_padding"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="@dimen/task_item_details_bottom_section_padding">
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:textSize="@dimen/task_item_title_size"
                 android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/task_item_title_size"
                 android:transitionName="title" />
 
             <TextView
                 android:id="@+id/tags"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/task_item_tag_size"
                 android:textAlignment="center"
                 android:textColor="@color/colorAccent"
+                android:textSize="@dimen/task_item_tag_size"
                 android:transitionName="tags" />
 
 
             <TextView
                 android:id="@+id/author"
                 android:layout_width="wrap_content"
-                android:textSize="@dimen/task_item_author_size"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/task_item_author_size"
                 android:transitionName="author" />
 
             <TextView
                 android:id="@+id/distance"
-                android:textSize="@dimen/task_item_distance_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/task_item_distance_size"
                 android:transitionName="distance" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/task_item_age_size"
+                android:transitionName="age" />
 
-                <TextView
-                    android:id="@+id/rating"
-                    android:textSize="@dimen/task_item_rating_size"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:transitionName="rating" />
-
-                <TextView
-                    android:id="@+id/age"
-                    android:layout_width="0dp"
-                    android:textSize="@dimen/task_item_age_size"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:transitionName="age" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

@@ -62,8 +62,6 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     TextView distance;
     @BindView(R.id.author)
     TextView author;
-    @BindView(R.id.rating)
-    TextView rating;
     @BindView(R.id.age)
     TextView age;
     @BindView(R.id.fab)
@@ -98,7 +96,6 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         title.setText(currentTask.getName() + (currentTask.isUserDone(currentUser.getUid()) ? "[Done]" : ""));
         tags.setText(StringUtil.getTagsString(currentTask.getTags()));
         author.setText(currentTask.getAuthorName());
-        rating.setText(String.valueOf(currentTask.getRating()));
 
         if (currentLocation != null) {
             distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
