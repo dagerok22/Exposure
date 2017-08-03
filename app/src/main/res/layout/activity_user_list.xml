@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     tools:context="com.noveogroup.evgeny.awersomeproject.ui.activity.UserListActivity">
 
+    <ProgressBar
+        android:id="@+id/user_list_progress_bar"
+        style="@android:style/Widget.Material.ProgressBar.Large"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/users_recycler_view"
         android:layout_width="match_parent"

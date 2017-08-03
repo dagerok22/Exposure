@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
@@ -23,6 +25,9 @@ import butterknife.ButterKnife;
 public class UserListActivity extends AppCompatActivity implements RealTimeDBApi.OnUserResultCallBack {
     @BindView(R.id.users_recycler_view)
     RecyclerView usersRecyclerView;
+
+    @BindView(R.id.user_list_progress_bar)
+    ProgressBar progressBar;
 
 
     public static Intent newIntent(Context context) {
@@ -40,16 +45,14 @@ public class UserListActivity extends AppCompatActivity implements RealTimeDBApi
 
     @Override
     public void onDataReceived(List<User> data) {
-        data.sort(new Comparator<User>() {
-            @Override
-            public int compare(User user1, User user2) {
-                if (user2.getRating() - user1.getRating() != 0) {
-                    return user2.getRating() - user1.getRating();
-                } else{
-                    return user1.getName().compareTo(user2.getName());
-                }
+        data.sort((user1, user2) -> {
+            if (user2.getRating() - user1.getRating() != 0) {
+                return user2.getRating() - user1.getRating();
+            } else{
+                return user1.getName().compareTo(user2.getName());
             }
         });
+        progressBar.setVisibility(View.GONE);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         usersRecyclerView.setNestedScrollingEnabled(false);
         usersRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));

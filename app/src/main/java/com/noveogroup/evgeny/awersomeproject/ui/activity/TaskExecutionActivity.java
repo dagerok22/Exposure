@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +24,6 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.ClarifaiHelper;
-import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -111,7 +109,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
                             .setNegativeButton("ОК",
                                     (dialog, id) -> {
                                         dialog.cancel();
-                                        startActivity(new Intent(this, TaskListActivity.class));
+                                        setResult(RESULT_OK);
                                         finish();
                                     });
                     AlertDialog alert = builder.create();
@@ -119,7 +117,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
                     dbApi.addRatingToUser(currentUser.getUid(), taskTags.size());
                     dbApi.getTaskById(taskId, data -> {
                         List<String> usersWhoDone = data.getUsersWhoDone();
-                        if (usersWhoDone == null){
+                        if (usersWhoDone == null) {
                             usersWhoDone = new ArrayList<>();
                         }
                         usersWhoDone.add(TaskExecutionActivity.this.currentUser.getUid());
@@ -129,8 +127,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
 
                 } else if (photoTagStatus == PhotoTagStatus.FAILURE) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Важное сообщение!")
-                            .setMessage("Вы не справиль с заданием. Теперь вы умрете")
+                    builder.setMessage("Не все тэги совпали. Попробуйте еще раз.")
                             .setCancelable(false)
                             .setNegativeButton("ОК",
                                     (dialog, id) -> {
@@ -172,7 +169,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
         for (Concept concept : clarifaiOutputs) {
             predictionResults.add(concept.name());
         }
-        if(imageView.getHeight()<10){
+        if (imageView.getHeight() < 10) {
             Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
         }
         recyclerViewSetup();
