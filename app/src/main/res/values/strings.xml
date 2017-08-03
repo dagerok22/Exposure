@@ -22,4 +22,6 @@
     <string name="log_in_button_text">Log in</string>
     <string name="exposure">Exposure</string>
     <string name="cant_get_your_location">Can\'t get your location</string>
+    <string name="author_try_to_do_his_task">Автор не может выполнять созданные им задания</string>
+    <string name="already_done_task">Вы уже выполнили это задание</string>
 </resources>

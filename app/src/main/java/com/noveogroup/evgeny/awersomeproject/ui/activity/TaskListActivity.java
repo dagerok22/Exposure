@@ -131,14 +131,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
 
     private void synchronizeData() {
         dbApi.getAllTasks(data -> {
-            String currentUserUid = currentUser.getUid();
-            List<String> usersWhoDone;
-            dataSet = new ArrayList<>();
-            for (Task task : data) {
-                if (!task.isUserDone(currentUserUid)) {
-                    dataSet.add(task);
-                }
-            }
+            dataSet = data;
             adapter.setDataSet(dataSet);
             if (currentLocation != null) {
                 adapter.setCurrentLocation(currentLocation);

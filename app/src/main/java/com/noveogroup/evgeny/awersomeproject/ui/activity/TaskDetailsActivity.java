@@ -28,6 +28,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.DateTransformerUtil;
@@ -83,6 +85,8 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
 //    private Location currentLocation;
 //    private LatLng currentPosition;
     private LatLng taskPosition;
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
 
     public static Intent getIntent(Context context, Task task) {
         Bundle bundle = new Bundle();
@@ -98,11 +102,12 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         setContentView(R.layout.activity_task_details);
         ButterKnife.bind(this);
         //TODO: initialize in BaseActivity class
-
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
         Location currentLocation = LocationUtil.getLastUpdatedLocation();
         taskPosition = new LatLng(currentTask.getLat(), currentTask.getLng());
-        title.setText(currentTask.getName());
+        title.setText(currentTask.getName() + (currentTask.isUserDone(currentUser.getUid()) ? "[Done]" : ""));
         tags.setText(StringUtil.getTagsString(currentTask.getTags()));
         author.setText(currentTask.getAuthorName());
         rating.setText(String.valueOf(currentTask.getRating()));
@@ -174,9 +179,23 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
 
     @OnClick(R.id.fab)
     void onTMPClick() {
+        if (currentTask.getAuthorId().equals(currentUser.getUid())){
+            Toast.makeText(this, R.string.author_try_to_do_his_task, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (currentTask.isUserDone(currentUser.getUid())){
+            Toast.makeText(this, R.string.already_done_task, Toast.LENGTH_SHORT).show();
+            return;
+        }
         Location lastUpdatedLocation = LocationUtil.getLastUpdatedLocation();
         if (lastUpdatedLocation == null){
             Toast.makeText(this, R.string.cant_get_your_location, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (LocationUtil.getDistance(
+                new LatLng(lastUpdatedLocation.getLatitude(), lastUpdatedLocation.getLongitude()),
+                taskPosition) > getResources().getInteger(R.integer.marker_circle_radius)){
+            Toast.makeText(this, "Вы слишком далеко от места задания", Toast.LENGTH_SHORT).show();
             return;
         }
         dispatchTakePictureIntent();

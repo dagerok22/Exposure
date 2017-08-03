@@ -32,6 +32,7 @@ import com.noveogroup.evgeny.awersomeproject.util.ImageBlurUtil;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
 import com.noveogroup.evgeny.awersomeproject.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,7 +51,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     }
 
     public void setDataSet(List<Task> dataSet) {
-        this.dataSet = dataSet;
+        this.dataSet = new ArrayList<>(dataSet);
     }
 
     public TaskListRecyclerViewAdapter(Context applicationContext, FirebaseUser currentUser) {
@@ -68,7 +69,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Task task = dataSet.get(position);
-        holder.title.setText(task.getName());
+        holder.title.setText(task.getName() + (task.isUserDone(currentUserUid) ? "[Done]" : ""));
         holder.author.setText(task.getAuthorName());
         holder.tags.setText(StringUtil.getTagsString(task.getTags()));
         holder.age.setText(DateTransformerUtil.getAgeOfTask(task.getDate(), holder.title.getContext()));
