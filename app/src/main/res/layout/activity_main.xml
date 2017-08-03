@@ -44,7 +44,7 @@
             fancy:fb_textColor="@color/colorPrimary" />
 
         <mehdi.sakout.fancybuttons.FancyButton
-            android:id="@+id/on_screen3_button"
+            android:id="@+id/add_new_task_btn"
             android:layout_width="@dimen/default_button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

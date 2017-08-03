@@ -2,18 +2,19 @@ package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -26,8 +27,12 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
+import com.noveogroup.evgeny.awersomeproject.util.PhotoHelper;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -37,7 +42,11 @@ import butterknife.OnClick;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 public class MainActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
-    private static final int RC_SIGN_IN = 1;
+
+    public static final String TAGS_ARRAY = "TAGS_ARRAY";
+    public static final String NEW_TASK_NAME = "NEW_TASK_NAME";
+    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_CHOOSE_TAGS = 2;
     Context context;
     @BindView(R.id.get_random_task_button)
     FancyButton rndTaskButton;
@@ -45,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     private FirebaseUser currentUser;
     private List<Task> tasks;
     private FirebaseAuth auth;
+    private String currentPhotoPath;
+    private ArrayList<String> tags;
+    private String taskName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +64,6 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         context = this;
-        requestLocationPermission();
-
-        // Configure Google Sign In
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.web_client_id))
@@ -68,16 +77,12 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
-
-
-
-
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             }
         }
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -105,9 +111,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    private void updateUI(FirebaseUser user) {
+        requestLocationPermission();
     }
 
     private void requestLocationPermission() {
@@ -117,8 +121,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             return;
-        }
-        else {
+        } else {
             LocationUtil.getInstance(this).addLocationUpdatesListener(this);
         }
     }
@@ -129,23 +132,21 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     }
 
 
-    @OnClick(R.id.on_screen3_button)
-    public void onScreen3() {
-        Intent intent = new Intent(MainActivity.this, NewTaskActivity.class);
-        startActivity(intent);
+    @OnClick(R.id.add_new_task_btn)
+    public void onNewTaskClick() {
+        dispatchTakePictureIntent();
     }
 
     @OnClick(R.id.get_random_task_button)
     public void onRandomClick() {
         rndTaskButton.setEnabled(false);
-        RealTimeDBApi.getInstance().getAllTasks(data -> {
+        RealTimeDBApi.getInstance().getAllTasksSingle(data -> {
             tasks = data;
             Location currentLocation = LocationUtil.getLastUpdatedLocation();
             if (currentLocation != null) {
                 startRandomTask(currentLocation);
             } else {
                 Toast.makeText(this, R.string.cant_get_your_location, Toast.LENGTH_SHORT).show();
-                //LocationUtil.getInstance(this).addLocationUpdatesListener(this);
                 rndTaskButton.setEnabled(true);
             }
         });
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     }
 
     @OnClick(R.id.log_out_button)
-    void logOutClicked(){
+    void logOutClicked() {
         auth.signOut();
         Intent intent = new Intent(this, LogInActivity.class);
         startActivity(intent);
@@ -172,8 +173,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
     @Override
     public boolean handleUpdatedLocation(Location location) {
-        return true;
+        return false;
     }
+
     private void startRandomTask(Location currentLocation) {
         ArrayList<Task> dataSet = new ArrayList<>();
         for (Task task : tasks) {
@@ -194,4 +196,64 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         rndTaskButton.setEnabled(true);
     }
 
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = PhotoHelper.createImageFile(this);
+                currentPhotoPath = photoFile.getAbsolutePath();
+            } catch (IOException ex) {
+                //FIXME use logback
+                Log.d("SCREEN3", "File create err: ", ex);
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "com.noveogroup.evgeny.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            startActivityForResult(NewPhotoActivity.newIntent(this, currentPhotoPath), REQUEST_CHOOSE_TAGS);
+        }
+        if (requestCode == REQUEST_CHOOSE_TAGS && resultCode == RESULT_OK) {
+            tags = data.getStringArrayListExtra(TAGS_ARRAY);
+            taskName = data.getStringExtra(NEW_TASK_NAME);
+            Location location = LocationUtil.getLastUpdatedLocation();
+            if (location != null) {
+                addTaskToDatabase(location);
+               // finish();
+            } else {
+                Toast.makeText(this, "Мы не можем определить ваше местоположение. Задание не будет добавленно."
+                        , Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void addTaskToDatabase(final Location location) {
+        float rating = 0;
+        String authorId = currentUser.getUid();
+        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
+        //Toast.makeText(getApplicationContext(), "got location", Toast.LENGTH_SHORT).show();
+        dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
+            @Override
+            public void onSuccess(Uri imageRef) {
+                dbApi.getUserById(authorId, data -> {
+                    dbApi.writeTask(taskName, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, data.getName(), new Date());
+                });
+                Toast.makeText(getApplicationContext(), "Task was add", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(getApplicationContext(), "Failure send", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        });
+    }
 }

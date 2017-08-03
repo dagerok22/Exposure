@@ -48,6 +48,7 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
         ButterKnife.bind(this);
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
+        dispatchTakePictureIntent();
     }
 
     @Override

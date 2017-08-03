@@ -67,6 +67,24 @@ public class RealTimeDBApi {
 
     }
 
+    public void getAllTasksSingle(OnTestResultCallBack callback) {
+        tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<Task> tasksData = new ArrayList<>();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    tasksData.add(child.getValue(Task.class));
+                }
+                callback.onDataReceived(tasksData);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
     public void writeTask(String name,
                           List<String> tags,
                           String imageUrl,
