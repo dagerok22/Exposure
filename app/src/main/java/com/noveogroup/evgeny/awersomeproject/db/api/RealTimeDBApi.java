@@ -93,13 +93,13 @@ public class RealTimeDBApi {
 
     public void getAllUsers(OnUserResultCallBack callBack) {
         final List<User> userData = new ArrayList<>();
-        tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     userData.add(child.getValue(User.class));
-                    callBack.onDataReceived(userData);
                 }
+                callBack.onDataReceived(userData);
             }
 
             @Override
