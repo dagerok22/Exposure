@@ -12,7 +12,7 @@
     <color name="task_item_bottom_section_color">#fff</color>
     <color name="task_item_title_color">#FFF</color>
     <color name="task_item_tag_color">@color/colorAccent</color>
-    <color name="task_item_author_color">@color/colorPrimaryDark</color>
+    <color name="task_item_author_color">@color/colorAccent</color>
     <color name="task_item_age_color">@color/colorPrimaryDark</color>
     <color name="toolbar">#ffeb3b</color>
     <color name="marker_circle_color">#c57bccc8</color>
