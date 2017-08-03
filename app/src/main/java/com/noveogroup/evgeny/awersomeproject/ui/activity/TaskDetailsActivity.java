@@ -7,7 +7,9 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -77,8 +80,8 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
 
     private GoogleMap map;
     private Marker userMarker;
-    private Location currentLocation;
-    private LatLng currentPosition;
+//    private Location currentLocation;
+//    private LatLng currentPosition;
     private LatLng taskPosition;
 
     public static Intent getIntent(Context context, Task task) {
@@ -97,7 +100,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         //TODO: initialize in BaseActivity class
 
         currentTask = (Task) getIntent().getSerializableExtra(KEY_TASK_ITEM);
-        currentLocation = LocationUtil.getLastUpdatedLocation();
+        Location currentLocation = LocationUtil.getLastUpdatedLocation();
         taskPosition = new LatLng(currentTask.getLat(), currentTask.getLng());
         title.setText(currentTask.getName());
         tags.setText(StringUtil.getTagsString(currentTask.getTags()));
@@ -117,8 +120,9 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
     }
 
     private void updateDistance() {
+       Location currentLocation = LocationUtil.getLastUpdatedLocation();
         distance.setText(String.format(Locale.ENGLISH, "%.1f km", (LocationUtil.getDistance(
-                currentPosition,
+                new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                 taskPosition)
                 ) / 1000)
         );
@@ -170,6 +174,11 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
 
     @OnClick(R.id.fab)
     void onTMPClick() {
+        Location lastUpdatedLocation = LocationUtil.getLastUpdatedLocation();
+        if (lastUpdatedLocation == null){
+            Toast.makeText(this, R.string.cant_get_your_location, Toast.LENGTH_SHORT).show();
+            return;
+        }
         dispatchTakePictureIntent();
     }
 
@@ -199,15 +208,16 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
             startActivity(TaskExecutionActivity.newIntent(this, currentPhotoPath, currentTask.getName(), new ArrayList<>(currentTask.getTags()), currentTask.getTaskId()));
         }
     }
+
     @Override
     public boolean handleUpdatedLocation(Location location) {
-        if (userMarker != null) {
-            updateUserMarker(location);
-        } else {
-            addUserMarker(location);
+        if (map != null) {
+            if (userMarker != null) {
+                updateUserMarker(location);
+            } else {
+                addUserMarker(location);
+            }
         }
-        this.currentLocation = location;
-        this.currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         updateDistance();
         progressBarMap.setVisibility(View.GONE);
         return false;

@@ -51,7 +51,7 @@ public class RealTimeDBApi {
 
     public void getAllTasks(OnTestResultCallBack callback) {
         final List<Task> tasksData = new ArrayList<>();
-        tasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        tasksRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {

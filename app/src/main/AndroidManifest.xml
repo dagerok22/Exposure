@@ -32,7 +32,7 @@
 
         <activity
             android:name=".ui.activity.MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.NewTaskActivity"
             android:screenOrientation="portrait" />
