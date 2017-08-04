@@ -104,7 +104,7 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
                 if (photoTagStatus == PhotoTagStatus.SUCCESS) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder//// TODO: 04.08.2017 plaseholder string 
-                           .setMessage(getString(R.string.task_done) + taskTags.size() + " очка")
+                           .setMessage(getString(R.string.task_done, taskTags.size()))
                             .setCancelable(false)
                             .setNegativeButton("ОК",
                                     (dialog, id) -> {

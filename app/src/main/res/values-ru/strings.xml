@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<string name="action_favorite">Сделанно</string>-->
+    <!--<string name="add_new_task">Добавить задание</string>-->
+    <!--<string name="already_done_task">Вы уже выполнили это задание</string>-->
+    <!--<string name="author_try_to_do_his_task">Автор не может выполнять созданные им задания</string>-->
+    <!--<string name="cant_get_your_location">Не можем определить локацию</string>-->
+    <!--<string name="enter_task_name_hint">Имя задания</string>-->
+    <!--<string name="find_user_coords">Пытаемся нати вас</string>-->
+    <!--<string name="to_table_button">Таблица заданий</string>-->
+    <!--<string name="new_task_button">Добавить новое задание</string>-->
+    <!--<string name="open_user_list">Топ игроков</string>-->
+    <!--<string name="make_new_task">Добавить новое задание</string>-->
+    <!--<string name="get_random_task">Случайное задание</string>-->
+    <!--<string name="less_then_hour_task_age">Меньше часа назад</string>-->
+    <!--<string name="location_error_cant_create_task">Не можем определить ваше местоположение, задание не созданно</string>-->
+    <!--<string name="permision_dilog">Чтобы выполнять или добавлять задания мы должны понять где вы находитесь</string>-->
+    <!--<string name="no_near_tasks">Нет заданий расположенных недалеко от вас</string>-->
+    <!--<string name="gps_error">Мы не можем определить ваше местоположение. Задание не будет добавленно.</string>-->
+    <!--<string name="failure_add_task">Отправка не удалась</string>-->
+    <!--<string name="enter_task_name">Введите имя задания</string>-->
+    <!--<string name="choose_one_tag">Выбирите хотя бы один тэг</string>-->
+    <!--<string name="cant_add_more_tasks">Нельзя добавлить больше тэгов</string>-->
+    <!--<string name="you_too_far">Вы слишком далеко от места задания</string>-->
+    <!--<string name="task_done">Поздравляем вы выполнили задание: +%1$d очка</string>-->
+</resources>
