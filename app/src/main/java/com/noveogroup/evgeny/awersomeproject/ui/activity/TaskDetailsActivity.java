@@ -180,7 +180,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements LocationUt
         if (LocationUtil.getDistance(
                 new LatLng(lastUpdatedLocation.getLatitude(), lastUpdatedLocation.getLongitude()),
                 taskPosition) > getResources().getInteger(R.integer.marker_circle_radius)){
-            Toast.makeText(this, "Вы слишком далеко от места задания", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.you_too_far, Toast.LENGTH_SHORT).show();
             return;
         }
         dispatchTakePictureIntent();

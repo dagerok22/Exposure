@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TagListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.ClarifaiHelper;
+import com.noveogroup.evgeny.awersomeproject.util.NewTaskHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -79,15 +80,15 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
         if (!chosenTags.isEmpty()) {
             if (!TextUtils.isEmpty(taskNameEditText.getText())) {
                 Intent answerIntent = new Intent();
-                answerIntent.putStringArrayListExtra(NewTaskActivity.TAGS_ARRAY, chosenTags);
-                answerIntent.putExtra(NewTaskActivity.NEW_TASK_NAME, taskNameEditText.getText().toString());
+                answerIntent.putStringArrayListExtra(NewTaskHelper.TAGS_ARRAY, chosenTags);
+                answerIntent.putExtra(NewTaskHelper.NEW_TASK_NAME, taskNameEditText.getText().toString());
                 setResult(RESULT_OK, answerIntent);
                 finish();
             } else {
-                Toast.makeText(this, "Enter task name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.enter_task_name, Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Chose an least one tag first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.choose_one_tag, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -136,7 +137,7 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
                 adapter.setTagChosenState(tag, true);
             }
             else {
-                Toast.makeText(this,"Can't add more tags to the task",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.cant_add_more_tasks,Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -5,16 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -27,12 +23,9 @@ import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
-import com.noveogroup.evgeny.awersomeproject.util.PhotoHelper;
+import com.noveogroup.evgeny.awersomeproject.util.NewTaskHelper;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
     Context context;
     @BindView(R.id.get_random_task_button)
     FancyButton rndTaskButton;
+    NewTaskHelper newTaskHelper;
     private GoogleApiClient googleApiClient;
     private FirebaseUser currentUser;
     private List<Task> tasks;
@@ -77,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
+        newTaskHelper = new NewTaskHelper(this);
     }
 
     @Override
@@ -86,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Важное сообщение!")
-                        .setMessage("Чтобы выполнять или добавлять задания мы должны понять где вы находитесь")
+                builder.setMessage(R.string.permision_dilog)
                         .setCancelable(false)
                         .setNegativeButton("ОК",
                                 (dialog, id) -> {
@@ -134,7 +128,11 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
 
     @OnClick(R.id.add_new_task_btn)
     public void onNewTaskClick() {
-        dispatchTakePictureIntent();
+        Intent intent = newTaskHelper.dispatchTakePictureIntent();
+        currentPhotoPath = newTaskHelper.getCurrentPhotoPath();
+        if (intent != null) {
+            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        }
     }
 
     @OnClick(R.id.get_random_task_button)
@@ -191,29 +189,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             Intent intent = TaskDetailsActivity.getIntent(this, randomTask);
             startActivity(intent);
         } else {
-            Toast.makeText(this, "Нет заданий расположенных недалеко от вас", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_near_tasks, Toast.LENGTH_SHORT).show();
         }
         rndTaskButton.setEnabled(true);
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = PhotoHelper.createImageFile(this);
-                currentPhotoPath = photoFile.getAbsolutePath();
-            } catch (IOException ex) {
-                //FIXME use logback
-                Log.d("SCREEN3", "File create err: ", ex);
-            }
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.noveogroup.evgeny.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
     }
 
     @Override
@@ -222,38 +200,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             startActivityForResult(NewPhotoActivity.newIntent(this, currentPhotoPath), REQUEST_CHOOSE_TAGS);
         }
         if (requestCode == REQUEST_CHOOSE_TAGS && resultCode == RESULT_OK) {
-            tags = data.getStringArrayListExtra(TAGS_ARRAY);
-            taskName = data.getStringExtra(NEW_TASK_NAME);
-            Location location = LocationUtil.getLastUpdatedLocation();
-            if (location != null) {
-                addTaskToDatabase(location);
-               // finish();
-            } else {
-                Toast.makeText(this, "Мы не можем определить ваше местоположение. Задание не будет добавленно."
-                        , Toast.LENGTH_LONG).show();
-            }
+            newTaskHelper.onActivityResult(data);
         }
     }
 
-    private void addTaskToDatabase(final Location location) {
-        float rating = 0;
-        String authorId = currentUser.getUid();
-        RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
-        //Toast.makeText(getApplicationContext(), "got location", Toast.LENGTH_SHORT).show();
-        dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
-            @Override
-            public void onSuccess(Uri imageRef) {
-                dbApi.getUserById(authorId, data -> {
-                    dbApi.writeTask(taskName, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, data.getName(), new Date());
-                });
-                Toast.makeText(getApplicationContext(), R.string.task_created, Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(getApplicationContext(), "Failure send", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        });
-    }
 }

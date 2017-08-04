@@ -21,6 +21,7 @@ import com.noveogroup.evgeny.awersomeproject.db.model.Task;
 import com.noveogroup.evgeny.awersomeproject.helper.ItemClickSupport;
 import com.noveogroup.evgeny.awersomeproject.ui.recycler.TaskListRecyclerViewAdapter;
 import com.noveogroup.evgeny.awersomeproject.util.LocationUtil;
+import com.noveogroup.evgeny.awersomeproject.util.NewTaskHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TaskListActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
+
+    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_CHOOSE_TAGS = 2;
 
     @BindView(R.id.fab)
     FloatingActionButton fab;
@@ -43,6 +47,8 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
     private FirebaseAuth firebaseAuth;
     private RealTimeDBApi dbApi;
     private FirebaseUser currentUser;
+    private NewTaskHelper newTaskHelper;
+
 
 
     @Override
@@ -50,6 +56,7 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         ButterKnife.bind(this);
+        newTaskHelper = new NewTaskHelper(this);
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         dbApi = RealTimeDBApi.getInstance();
@@ -83,8 +90,21 @@ public class TaskListActivity extends AppCompatActivity implements LocationUtil.
 
     @OnClick(R.id.fab)
     void onAddTaskFabClicked() {
-        Intent intent = new Intent(this, NewTaskActivity.class);
-        startActivity(intent);
+        Intent intent = newTaskHelper.dispatchTakePictureIntent();
+        if (intent != null) {
+            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            startActivityForResult(NewPhotoActivity.newIntent(this, newTaskHelper.getCurrentPhotoPath()),
+                    REQUEST_CHOOSE_TAGS);
+        }
+        if (requestCode == REQUEST_CHOOSE_TAGS && resultCode == RESULT_OK) {
+            newTaskHelper.onActivityResult(data);
+        }
     }
 
     private void initializeRecyclerView() {

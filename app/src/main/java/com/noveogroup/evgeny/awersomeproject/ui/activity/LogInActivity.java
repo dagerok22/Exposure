@@ -84,19 +84,19 @@ public class LogInActivity extends AppCompatActivity {
         createNewCheckBox.setEnabled(false);
         if (isChecked){
             if (!isEmailValid(email.getText().toString())){
-                Toast.makeText(this, "Not valid email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.not_valid_email, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (password.getText().toString().isEmpty()){
-                Toast.makeText(this, "Password can't be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.password_cant_be_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (name.getText().toString().isEmpty()){
-                Toast.makeText(this, "Name can't be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.name_cant_be_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!password.getText().toString().equals(confirmPassword.getText().toString())){
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.paswords_do_not_match, Toast.LENGTH_SHORT).show();
                 return;
             }
             auth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
@@ -108,13 +108,13 @@ public class LogInActivity extends AppCompatActivity {
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(this, "Could not create new user", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.could_not_create_new_user, Toast.LENGTH_SHORT).show();
                             updateUI();
                         }
                     });
         }else {
             if (!isEmailValid(email.getText().toString())){
-                Toast.makeText(this, "Not valid email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,  R.string.not_valid_email, Toast.LENGTH_SHORT).show();
                 return;
             }
             auth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
@@ -125,7 +125,7 @@ public class LogInActivity extends AppCompatActivity {
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.authentification_failed, Toast.LENGTH_SHORT).show();
                             updateUI();
                         }
                     });
@@ -149,11 +149,11 @@ public class LogInActivity extends AppCompatActivity {
         }
         if (isChecked){
             name.setVisibility(View.VISIBLE);
-            signInButton.setText("Sign up");
+            signInButton.setText(getString(R.string.sing_in));
             confirmPassword.setVisibility(View.VISIBLE);
         }else {
             name.setVisibility(View.GONE);
-            signInButton.setText("Log in");
+            signInButton.setText(getString(R.string.log_in));
             confirmPassword.setVisibility(View.GONE);
         }
     }

@@ -26,4 +26,21 @@
     <string name="already_done_task">Вы уже выполнили это задание</string>
     <string name="location_error_cant_create_task">We can\'t locate you, task hasn\'t been created</string>
     <string name="task_created">Task has been created</string>
+    <string name="not_valid_email">Not valid email</string>
+    <string name="password_cant_be_empty">Password can\'t be empty</string>
+    <string name="name_cant_be_empty">Name can\'t be empty</string>
+    <string name="paswords_do_not_match">Passwords do not match</string>
+    <string name="could_not_create_new_user">Could not create new user</string>
+    <string name="authentification_failed">Authentication failed</string>
+    <string name="sing_in">Sign up</string>
+    <string name="log_in">Log in</string>
+    <string name="permision_dilog">Чтобы выполнять или добавлять задания мы должны понять где вы находитесь</string>
+    <string name="no_near_tasks">Нет заданий расположенных недалеко от вас</string>
+    <string name="gps_error">Мы не можем определить ваше местоположение. Задание не будет добавленно.</string>
+    <string name="failure_add_task">Failure send</string>
+    <string name="enter_task_name">Enter task name</string>
+    <string name="choose_one_tag">Choose an least one tag first</string>
+    <string name="cant_add_more_tasks">Can\'t add more tags to the task</string>
+    <string name="you_too_far">Вы слишком далеко от места задания</string>
+    <string name="task_done">Поздравляем вы выполнили задание: +</string>
 </resources>
