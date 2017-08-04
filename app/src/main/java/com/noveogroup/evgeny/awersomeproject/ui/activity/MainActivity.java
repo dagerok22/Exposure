@@ -36,21 +36,16 @@ import mehdi.sakout.fancybuttons.FancyButton;
 
 public class MainActivity extends AppCompatActivity implements LocationUtil.UpdatedLocationHandler {
 
-    public static final String TAGS_ARRAY = "TAGS_ARRAY";
-    public static final String NEW_TASK_NAME = "NEW_TASK_NAME";
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_CHOOSE_TAGS = 2;
     Context context;
     @BindView(R.id.get_random_task_button)
     FancyButton rndTaskButton;
     NewTaskHelper newTaskHelper;
-    private GoogleApiClient googleApiClient;
-    private FirebaseUser currentUser;
     private List<Task> tasks;
     private FirebaseAuth auth;
     private String currentPhotoPath;
-    private ArrayList<String> tags;
-    private String taskName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +53,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         context = this;
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_client_id))
-                .requestEmail()
-                .build();
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, connectionResult -> {
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
         auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
         newTaskHelper = new NewTaskHelper(this);
     }
 
@@ -93,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
             } else {
                 requestLocationPermission();
             }
+        }
+        else {
+            LocationUtil.getInstance(this).addLocationUpdatesListener(this);
         }
     }
 
