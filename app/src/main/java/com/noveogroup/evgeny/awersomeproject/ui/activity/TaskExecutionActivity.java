@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -166,16 +167,23 @@ public class TaskExecutionActivity extends AppCompatActivity implements Clarifai
 
     @Override
     public void onAnswerGet(List<Concept> clarifaiOutputs) {
-        predictionResults = new ArrayList<>();
-        for (Concept concept : clarifaiOutputs) {
-            predictionResults.add(concept.name());
+        if (clarifaiOutputs != null) {
+            predictionResults = new ArrayList<>();
+            for (Concept concept : clarifaiOutputs) {
+                predictionResults.add(concept.name());
+            }
+            if (imageView.getHeight() < 10) {
+                Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
+            }
+            recyclerViewSetup();
+            sortTags();
         }
-        if (imageView.getHeight() < 10) {
-            Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
+        else {
+            Toast.makeText(this,"Can't get any tags",Toast.LENGTH_SHORT).show();
+            finish();
         }
-        recyclerViewSetup();
-        sortTags();
-        progressBar2.setVisibility(View.GONE);
+            progressBar2.setVisibility(View.GONE);
+
     }
 
     private enum PhotoTagStatus {

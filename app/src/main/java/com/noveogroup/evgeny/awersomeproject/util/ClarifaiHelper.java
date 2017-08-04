@@ -14,28 +14,28 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
 
+
 /**
  * Created by Evgeny on 28.07.2017.
  */
 
 public class ClarifaiHelper {
-
     private static ClarifaiClient client;
     PostExecuteListener postExecuteListener;
     String photoPath;
-
     public ClarifaiHelper(String photoPath, PostExecuteListener postExecuteListener) {
         this.photoPath = photoPath;
         this.postExecuteListener = postExecuteListener;
     }
 
-    private List<Concept> getTagList(String currentPhotoPath) {
+    private List<Concept> getTagList(String currentPhotoPath) throws Exception {
         Log.d("ClarifaiHelper", "request start");
         if (client == null) {
             client = new ClarifaiBuilder("f7bcefcc6cbf45219549bc97714c8604").buildSync();
         }
+        List<Concept> tags;
         try {
-            List<Concept> tags = client
+            tags = client
                     .getDefaultModels()
                     .generalModel()
                     .predict()
@@ -45,19 +45,22 @@ public class ClarifaiHelper {
                     .get(0)
                     .data();
             Log.d("ClarifaiHelper", "request success");
-            return tags;
-        }catch (ClarifaiException e){
-            return null;
+        } catch (ClarifaiException e) {
+            throw new Exception(e);
         }
+        return tags;
     }
-
 
     public void startAsyncTask() {
         AsyncTask<Void, Void, List<Concept>> asyncTask = new AsyncTask<Void, Void, List<Concept>>() {
             @Override
             protected List<Concept> doInBackground(Void... params) {
                 PhotoHelper.compressPhotoFile(photoPath, 25);
-                return getTagList(photoPath);
+                try {
+                    return getTagList(photoPath);
+                } catch (Exception e) {
+                    return null;
+                }
             }
 
             @Override
@@ -68,9 +71,9 @@ public class ClarifaiHelper {
         asyncTask.execute((Void[]) null);
     }
 
+
     public interface PostExecuteListener {
         void onAnswerGet(List<Concept> clarifaiOutputs);
     }
-
 }
 

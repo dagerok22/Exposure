@@ -1,30 +1,20 @@
 package com.noveogroup.evgeny.awersomeproject.ui.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.noveogroup.evgeny.awersomeproject.R;
 import com.noveogroup.evgeny.awersomeproject.db.api.RealTimeDBApi;
 
 import java.util.Date;
-import java.util.concurrent.Executor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,8 +22,6 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import mehdi.sakout.fancybuttons.FancyButton;
-
-import static mehdi.sakout.fancybuttons.FancyButton.TAG;
 
 public class LogInActivity extends AppCompatActivity {
 
@@ -82,20 +70,20 @@ public class LogInActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         signInButton.setEnabled(false);
         createNewCheckBox.setEnabled(false);
-        if (isChecked){
-            if (!isEmailValid(email.getText().toString())){
+        if (isChecked) {
+            if (!isEmailValid(email.getText().toString())) {
                 Toast.makeText(this, R.string.not_valid_email, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (password.getText().toString().isEmpty()){
+            if (password.getText().toString().isEmpty()) {
                 Toast.makeText(this, R.string.password_cant_be_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (name.getText().toString().isEmpty()){
+            if (name.getText().toString().isEmpty()) {
                 Toast.makeText(this, R.string.name_cant_be_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!password.getText().toString().equals(confirmPassword.getText().toString())){
+            if (!password.getText().toString().equals(confirmPassword.getText().toString())) {
                 Toast.makeText(this, R.string.paswords_do_not_match, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -112,9 +100,9 @@ public class LogInActivity extends AppCompatActivity {
                             updateUI();
                         }
                     });
-        }else {
-            if (!isEmailValid(email.getText().toString())){
-                Toast.makeText(this,  R.string.not_valid_email, Toast.LENGTH_SHORT).show();
+        } else {
+            if (!isEmailValid(email.getText().toString())) {
+                Toast.makeText(this, R.string.not_valid_email, Toast.LENGTH_SHORT).show();
                 return;
             }
             auth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
@@ -133,7 +121,7 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     @OnCheckedChanged(R.id.create_new_checkbox)
-    void onCheckedChanged(boolean isChecked){
+    void onCheckedChanged(boolean isChecked) {
         this.isChecked = isChecked;
         updateUI();
     }
@@ -142,23 +130,23 @@ public class LogInActivity extends AppCompatActivity {
         createNewCheckBox.setEnabled(true);
         signInButton.setEnabled(true);
         progressBar.setVisibility(View.GONE);
-        if (user != null){
+        if (user != null) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         }
-        if (isChecked){
+        if (isChecked) {
             name.setVisibility(View.VISIBLE);
             signInButton.setText(getString(R.string.sing_in));
             confirmPassword.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             name.setVisibility(View.GONE);
             signInButton.setText(getString(R.string.log_in));
             confirmPassword.setVisibility(View.GONE);
         }
     }
 
-    private static boolean isEmailValid(String email){
+    private static boolean isEmailValid(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() || !email.isEmpty();
     }
 }

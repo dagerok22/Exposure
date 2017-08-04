@@ -115,14 +115,20 @@ public class NewPhotoActivity extends AppCompatActivity implements TagListRecycl
 
     @Override
     public void onAnswerGet(List<Concept> clarifaiOutputs) {
-        predictionResults = new ArrayList<>();
-        for (Concept concept : clarifaiOutputs) {
-            predictionResults.add(concept.name());
+        if (clarifaiOutputs != null) {
+            predictionResults = new ArrayList<>();
+            for (Concept concept : clarifaiOutputs) {
+                predictionResults.add(concept.name());
+            }
+            if(imageView.getHeight()<10){
+                Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
+            }
+            recyclerViewSetup();
         }
-        if(imageView.getHeight()<10){
-            Glide.with(this).load(new File(photoPath)).bitmapTransform(new CropSquareTransformation(this)).into(imageView);
+        else {
+            Toast.makeText(this,"Can't get any tags",Toast.LENGTH_SHORT).show();
+            finish();
         }
-        recyclerViewSetup();
         progressBar.setVisibility(View.GONE);
     }
 
