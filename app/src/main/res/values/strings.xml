@@ -24,4 +24,6 @@
     <string name="cant_get_your_location">Can\'t get your location</string>
     <string name="author_try_to_do_his_task">Автор не может выполнять созданные им задания</string>
     <string name="already_done_task">Вы уже выполнили это задание</string>
+    <string name="location_error_cant_create_task">We can\'t locate you, task hasn\'t been created</string>
+    <string name="task_created">Task has been created</string>
 </resources>

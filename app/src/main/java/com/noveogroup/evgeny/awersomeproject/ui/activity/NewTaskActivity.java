@@ -103,7 +103,7 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
                 finish();
             }
             else {
-                Toast.makeText(this,"Мы не можем определить ваше местоположение. Задание не будет добавленно."
+                Toast.makeText(this, R.string.location_error_cant_create_task
                         ,Toast.LENGTH_LONG).show();
             }
         }
@@ -118,14 +118,14 @@ public class NewTaskActivity extends AppCompatActivity implements LocationUtil.U
         float rating = 0;
         String authorId = currentUser.getUid();
         RealTimeDBApi dbApi = RealTimeDBApi.getInstance();
-        Toast.makeText(getApplicationContext(), "got location", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "got location", Toast.LENGTH_SHORT).show();
         dbApi.writeImageAndGetUrl(new File(currentPhotoPath), new RealTimeDBApi.HandleImageFileCallback() {
             @Override
             public void onSuccess(Uri imageRef) {
                 dbApi.getUserById(authorId, data -> {
                     dbApi.writeTask(taskName, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, data.getName(), new Date());
+                    Toast.makeText(getApplicationContext(), R.string.task_created, Toast.LENGTH_SHORT).show();
                 });
-                Toast.makeText(getApplicationContext(), "Success send", Toast.LENGTH_SHORT).show();
             }
 
             @Override

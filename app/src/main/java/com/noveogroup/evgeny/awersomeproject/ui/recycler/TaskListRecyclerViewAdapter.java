@@ -84,7 +84,7 @@ public class TaskListRecyclerViewAdapter extends RecyclerView.Adapter<TaskListRe
             holder.distance.setText(R.string.find_user_coords);
         }
 
-        if (task.isUserDone(currentUserUid)) {
+        if (task.isUserDone(currentUserUid) || task.getAuthorId().equals(currentUserUid)) {
             Glide.with(context)
                     .load(task.getImageUrl())
                     .bitmapTransform(new CenterCrop(holder.title.getContext()))

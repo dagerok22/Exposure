@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements LocationUtil.Upda
                 dbApi.getUserById(authorId, data -> {
                     dbApi.writeTask(taskName, tags, imageRef.toString(), new LatLng(location.getLatitude(), location.getLongitude()), rating, authorId, data.getName(), new Date());
                 });
-                Toast.makeText(getApplicationContext(), "Task was add", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.task_created, Toast.LENGTH_SHORT).show();
             }
 
             @Override
