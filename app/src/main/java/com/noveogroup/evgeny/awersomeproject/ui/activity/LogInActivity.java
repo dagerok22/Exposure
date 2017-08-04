@@ -73,18 +73,22 @@ public class LogInActivity extends AppCompatActivity {
         if (isChecked) {
             if (!isEmailValid(email.getText().toString())) {
                 Toast.makeText(this, R.string.not_valid_email, Toast.LENGTH_SHORT).show();
+                updateUI();
                 return;
             }
             if (password.getText().toString().isEmpty()) {
                 Toast.makeText(this, R.string.password_cant_be_empty, Toast.LENGTH_SHORT).show();
+                updateUI();
                 return;
             }
             if (name.getText().toString().isEmpty()) {
                 Toast.makeText(this, R.string.name_cant_be_empty, Toast.LENGTH_SHORT).show();
+                updateUI();
                 return;
             }
             if (!password.getText().toString().equals(confirmPassword.getText().toString())) {
                 Toast.makeText(this, R.string.paswords_do_not_match, Toast.LENGTH_SHORT).show();
+                updateUI();
                 return;
             }
             auth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
@@ -103,6 +107,12 @@ public class LogInActivity extends AppCompatActivity {
         } else {
             if (!isEmailValid(email.getText().toString())) {
                 Toast.makeText(this, R.string.not_valid_email, Toast.LENGTH_SHORT).show();
+                updateUI();
+                return;
+            }
+            if (password.getText().toString().isEmpty()) {
+                Toast.makeText(this, R.string.enter_password, Toast.LENGTH_SHORT).show();
+                updateUI();
                 return;
             }
             auth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())

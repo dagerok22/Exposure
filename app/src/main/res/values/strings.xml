@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Awersome Project</string>
+    <string name="app_name">Exposure</string>
     <string name="title_activity_task_list">TaskListActivity</string>
     <string name="less_then_hour_task_age">less then an hour</string>
     <string name="action_favorite">done</string>
@@ -43,4 +43,5 @@
     <string name="cant_add_more_tasks">Нельзя добавлить больше тэгов</string>
     <string name="you_too_far">Вы слишком далеко от места задания</string>
     <string name="task_done">Поздравляем вы выполнили задание: +%1$d очка</string>
+    <string name="enter_password">Enter your password</string>
 </resources>
